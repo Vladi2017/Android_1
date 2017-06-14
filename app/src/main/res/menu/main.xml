@@ -1,0 +1,52 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.test1pn.MainActivity" >
+
+    <item
+        android:id="@+id/rng1"
+        android:orderInCategory="100"
+        android:title="@string/rng1"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/sha256"
+        android:orderInCategory="101"
+        android:title="@string/SHA256"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/sha256HmacEncode"
+        android:orderInCategory="102"
+        android:title="@string/SHA256HmacEncode"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/datagrams"
+        android:orderInCategory="103"
+        android:title="@string/testDatagrams"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/ScheduledThreadPoolExecutor"
+        android:orderInCategory="104"
+        android:title="@string/ScheduledThreadPoolExecutor"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/enumTest"
+        android:orderInCategory="105"
+        android:title="@string/enumTest"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/TimerTest"
+        android:orderInCategory="106"
+        android:title="@string/TimerTest"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/PowerManager"
+        android:orderInCategory="107"
+        android:title="@string/WakeLockON"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/notify1"
+        android:orderInCategory="108"
+        android:title="@string/notify1"
+        app:showAsAction="never"/>
+
+</menu>

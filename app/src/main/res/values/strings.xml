@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string name="app_name">test1</string>
+    <string name="rng1">1.RNG</string>
+    <string name="SHA256">2.SHA256</string>
+    <string name="SHA256HmacEncode">3.SHA256HmacEncode</string>
+    <string name="testDatagrams">4.testDatagrams</string>
+    <string name="ScheduledThreadPoolExecutor">5.test_ScheduledThreadPoolExecutor</string>
+    <string name="enumTest">6.enumTest</string>
+    <string name="TimerTest">7.TimerClass_test</string>
+    <string name="WakeLockON">8.WAKE_LOCK ON.</string>
+    <string name="WakeLockOFF">8.WAKE_LOCK OFF.</string>
+    <string name="notify1">9.Notifiaction_1.</string>
+    <string name="t1">ver.79\n
+        1.cryptographically strong random number generator (RNG)\n
+        2.compute SHA256 digest\n
+        3.encode Hash MAC\n
+        4.some Datagram tests\n
+        5.ScheduledThreadPoolExecutor test(s) AND logging in gui from a background thread.\n
+        6.Some enum type tests.\n
+        7.java.util.Timer class test.\n
+        8.android.os.PowerManager stuff (WAKE_LOCK).\n
+        9.resume this app from notification.\n</string>
+
+</resources>
