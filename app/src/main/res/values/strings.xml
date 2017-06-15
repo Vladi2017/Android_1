@@ -12,7 +12,7 @@
     <string name="WakeLockON">8.WAKE_LOCK ON.</string>
     <string name="WakeLockOFF">8.WAKE_LOCK OFF.</string>
     <string name="notify1">9.Notifiaction_1.</string>
-    <string name="t1">ver.79\n
+    <string name="t1">ver.80\n
         1.cryptographically strong random number generator (RNG)\n
         2.compute SHA256 digest\n
         3.encode Hash MAC\n
