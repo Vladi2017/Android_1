@@ -237,6 +237,7 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			long when = System.currentTimeMillis();
 			android.app.Notification notification = new android.app.Notification(icon, tickerText, when);
 			// 3.Define the Notification's expanded message and Intent:
+
 			android.content.Context context = getApplicationContext();
 			CharSequence contentTitle = "Notification";
 			CharSequence contentText = "Vladi's app!.. " + tickerText; // message to user
@@ -248,6 +249,10 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			// 4.Pass the Notification to the NotificationManager:
 			final int NOTIFICATION_ICON_ID = 1;
 			mNotificationManager.notify(NOTIFICATION_ICON_ID, notification);
+		}
+		if (id == R.id.tcpClient1) {
+			Intent tcpClient1Intent = new Intent(this, TCPclient1Activity.class);
+			startActivity(tcpClient1Intent);
 		}
 		return super.onOptionsItemSelected(item);
 	}

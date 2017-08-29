@@ -48,5 +48,9 @@
         android:orderInCategory="108"
         android:title="@string/notify1"
         app:showAsAction="never"/>
-
+    <item
+        android:id="@+id/tcpClient1"
+        android:orderInCategory="109"
+        android:title="@string/tcpClient1"
+        app:showAsAction="never"/>
 </menu>

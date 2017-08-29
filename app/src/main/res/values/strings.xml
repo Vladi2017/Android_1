@@ -12,7 +12,9 @@
     <string name="WakeLockON">8.WAKE_LOCK ON.</string>
     <string name="WakeLockOFF">8.WAKE_LOCK OFF.</string>
     <string name="notify1">9.Notifiaction_1.</string>
-    <string name="t1">ver.80\n
+    <string name="tcpClient1">10.TCPclient1.</string>
+    <string name="tcpClient1Activitywelcome">Vladi\'s TCPclient1Activity</string>
+    <string name="t1">ver.82\n
         1.cryptographically strong random number generator (RNG)\n
         2.compute SHA256 digest\n
         3.encode Hash MAC\n
@@ -21,6 +23,6 @@
         6.Some enum type tests.\n
         7.java.util.Timer class test.\n
         8.android.os.PowerManager stuff (WAKE_LOCK).\n
-        9.resume this app from notification.\n</string>
-
+        9.resume this app from notification.\n
+        10.TCPclient1</string>
 </resources>
