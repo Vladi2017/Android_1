@@ -12,7 +12,7 @@
         android:id="@+id/sha256"
         android:orderInCategory="101"
         android:title="@string/SHA256"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
     <item
         android:id="@+id/sha256HmacEncode"
         android:orderInCategory="102"
@@ -52,5 +52,10 @@
         android:id="@+id/tcpClient1"
         android:orderInCategory="109"
         android:title="@string/tcpClient1"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/timer1"
+        android:orderInCategory="99"
+        android:title="@string/timer1OFF"
         app:showAsAction="never"/>
 </menu>

@@ -137,6 +137,15 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			((ViewGroup) tw1.getParent()).removeView(tw1);
 		if (res == null) res = getResources();
 		int id = item.getItemId();
+        if (id == R.id.timer1) {
+            if (item.getTitle().toString().contains("ON")) {
+                item.setTitle(res.getString(R.string.timer1OFF));
+                timerHandler.postDelayed(timer1Runnable, 0);
+            } else {
+                item.setTitle(res.getString(R.string.timer1ON));
+                timerHandler.removeCallbacks(timer1Runnable);
+            }
+        }
 		if (id == R.id.PowerManager) {
 			if (pm == null) {
 				pm = (android.os.PowerManager) getSystemService(android.content.Context.POWER_SERVICE);

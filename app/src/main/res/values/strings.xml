@@ -3,6 +3,8 @@
 
     <string name="app_name">test1</string>
     <string name="rng1">1.RNG</string>
+    <string name="timer1OFF">timerToasts OFF.</string>
+    <string name="timer1ON">timerToasts ON.</string>
     <string name="SHA256">2.SHA256</string>
     <string name="SHA256HmacEncode">3.SHA256HmacEncode</string>
     <string name="testDatagrams">4.testDatagrams</string>
@@ -13,8 +15,8 @@
     <string name="WakeLockOFF">8.WAKE_LOCK OFF.</string>
     <string name="notify1">9.Notifiaction_1.</string>
     <string name="tcpClient1">10.TCPclient1.</string>
-    <string name="tcpClient1Activitywelcome">Vladi\'s TCPclient1Activity</string>
-    <string name="t1">ver.83\n
+    <string name="tcpClient1Activitywelcome">Vladi\'s TCPclient1Activity logger</string>
+    <string name="t1">ver.102\n
         1.cryptographically strong random number generator (RNG)\n
         2.compute SHA256 digest\n
         3.encode Hash MAC\n
@@ -25,4 +27,43 @@
         8.android.os.PowerManager stuff (WAKE_LOCK).\n
         9.resume this app from notification.\n
         10.TCPclient1</string>
+    <string name="label_tcpclient1activity">TCPclient1Activity</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+    <!-- Vl. used in prefernces -->
+    <string name="pref_title_server_address">TCPserverAddress</string>
+    <string name="pref_default_server_address">89.120.135.155</string>
+    <string name="pref_title_server_port">TCPserverPort</string>
+    <string name="pref_default_server_port">7000</string>
+    <string name="title_server_keepalive_interval">Set ServerKeepaliveInterval</string>
+    <string name="default_server_keepalive_interval">20</string>
+
+    <string name="ioexception1">\nVladi.., we got an IOException in RecvThread.\n</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+
+    <!-- Example settings for Notifications -->
+
+    <string name="pref_ringtone_silent">Silent</string>
+
 </resources>

@@ -8,6 +8,7 @@ android {
         applicationId "com.example.test1pn"
         minSdkVersion 11
         targetSdkVersion 19
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -23,6 +24,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.1.0'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
 }
+
+
 
 
 

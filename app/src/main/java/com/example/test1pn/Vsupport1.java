@@ -15,7 +15,7 @@ public class Vsupport1 {
 	 * 
 	 */
 	public static void log(final android.widget.EditText et, final String msg) {
-		android.util.Log.i("Vsupport1", "V.from log(..)");
+//		android.util.Log.i("Vsupport1", "V.from log(..)");
 		((android.app.Activity)et.getContext()).runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
