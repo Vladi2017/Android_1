@@ -109,30 +109,35 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         ByteBuffer bytebuf = ByteBuffer.allocate(1024);
         msg = dialog.getUserInput() + "\n";
         bytebuf = ByteBuffer.wrap(msg.getBytes());
-        try {
-            if (null != client) client.write(bytebuf);
-            else {
-                et1.append("\nVladi. The SocketChannel (the client) not created (is null)." +
-                        " Are you connected?\n");
-                return;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            t.setText("Vladi.., we got an IOException in sendMessage(), leave...");	t.show();
-            try {
-                client.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-                et1.append("\nVladi.., client.close() IOException\n");
-                return;
-            }
-        } catch (Exception e) {
-            et1.append("\nVladi. caught: " + e.toString());
-            return;
+        if (null != client) {
+            final ByteBuffer finalBytebuf = bytebuf;
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        client.write(finalBytebuf);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        t.setText("Vladi.., we got an IOException in sendMessage(), leave..."); t.show();
+                        try {
+                            client.close();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();
+                            t.setText("Vladi.., client.close() IOException"); t.show();
+                            return;
+                        }
+                        //        System.exit(0);
+                        t.setText("Vladi.., normally closed TCPclient1Activity"); t.show();
+                        finish();
+                    } catch (Exception e) {
+                        t.setText("Vladi. caught: " + e.toString()); t.show();
+                    }
+                }
+            }.start();
+        } else {
+            et1.append("\nVladi. The SocketChannel (the client) not created (is null)." +
+                    " Are you connected?\n");
         }
-//        System.exit(0);
-        t.setText("Vladi.., normally closed TCPclient1Activity");	t.show();
-        finish();
     }
 
     @Override
@@ -196,7 +201,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             buf.limit(bl);
                             java.nio.CharBuffer charBuffer = decoder.decode(buf);
                             String result = charBuffer.toString();
-                            System.out.println(result);
+                            Vsupport1.log(et1, result + "\n");
                         }
                         buf.clear();
                     }
