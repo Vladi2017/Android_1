@@ -11,6 +11,8 @@ package com.example.test1pn;
  * 7. java.util.Timer class test.
  * 8. android.os.PowerManager stuff (WAKE_LOCK).
  * 9. resume this app from notification.
+ * 10.TCPclient1.
+ * 11.AlarmManager1. https://developer.android.com/training/scheduling/alarms.html#boot
  * */
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -69,6 +71,8 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 	android.content.res.Resources res;
 	android.os.PowerManager pm;
 	android.os.PowerManager.WakeLock wl;
+	private android.app.AlarmManager alarmMgr;
+	private android.app.PendingIntent alarmIntent;
 
 	private boolean ftimer_ElapsedTask_canceled = false;//V.f=flag
     Runnable timer1Runnable = new Runnable() {
@@ -146,6 +150,14 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
                 timerHandler.removeCallbacks(timer1Runnable);
             }
         }
+		if (id == R.id.alarmManager1) {
+			t.setText("Wait for 30 seconds"); t.setDuration(Toast.LENGTH_SHORT); t.show();
+			alarmMgr = (android.app.AlarmManager)maContext.getSystemService(android.content.Context.ALARM_SERVICE);
+			Intent intent = new Intent(maContext, SettingsActivity.class);
+			alarmIntent = android.app.PendingIntent.getBroadcast(maContext, 0, intent, 0);
+			alarmMgr.set(android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP,
+					android.os.SystemClock.elapsedRealtime() + 30 * 1000, alarmIntent);
+		}
 		if (id == R.id.PowerManager) {
 			if (pm == null) {
 				pm = (android.os.PowerManager) getSystemService(android.content.Context.POWER_SERVICE);

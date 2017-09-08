@@ -15,8 +15,9 @@
     <string name="WakeLockOFF">8.WAKE_LOCK OFF.</string>
     <string name="notify1">9.Notifiaction_1.</string>
     <string name="tcpClient1">10.TCPclient1.</string>
+    <string name="alarmManager1">11.AlarmManager1</string>
     <string name="tcpClient1Activitywelcome">Vladi\'s TCPclient1Activity logger</string>
-    <string name="t1">ver.104\n
+    <string name="t1">ver.105\n
         1.cryptographically strong random number generator (RNG)\n
         2.compute SHA256 digest\n
         3.encode Hash MAC\n
@@ -26,7 +27,8 @@
         7.java.util.Timer class test.\n
         8.android.os.PowerManager stuff (WAKE_LOCK).\n
         9.resume this app from notification.\n
-        10.TCPclient1</string>
+        10.TCPclient1.\n
+        11.AlarmManager1.</string>
     <string name="label_tcpclient1activity">TCPclient1Activity</string>
     <string name="title_activity_settings">Settings</string>
 

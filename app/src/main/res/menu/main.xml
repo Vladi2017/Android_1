@@ -58,4 +58,9 @@
         android:orderInCategory="99"
         android:title="@string/timer1OFF"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/alarmManager1"
+        android:orderInCategory="110"
+        android:title="@string/alarmManager1"
+        app:showAsAction="never"/>
 </menu>
