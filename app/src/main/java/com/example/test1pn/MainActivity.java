@@ -32,6 +32,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.example.test1pn.Vsupport1.XLINK;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
@@ -72,7 +75,7 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 	android.os.PowerManager pm;
 	android.os.PowerManager.WakeLock wl;
 	private android.app.AlarmManager alarmMgr;
-	private android.app.PendingIntent alarmIntent;
+	private android.app.PendingIntent pendingIntent;
 
 	private boolean ftimer_ElapsedTask_canceled = false;//V.f=flag
     Runnable timer1Runnable = new Runnable() {
@@ -131,6 +134,18 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 		return true;
 	}
 
+	Intent intentSettingsActivity;
+	BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			t.setText("Vladi3, Inside my broadcastReceiver"); t.setDuration(Toast.LENGTH_SHORT); t.show();
+			Vsupport1.log(ev1, "Vladi3, Inside my broadcastReceiver\n");
+			context.unregisterReceiver(this);
+			Intent intentLocal = new Intent(maContext, SettingsActivity.class); //Vl.explicit intent
+			startActivity(intentLocal);
+		}
+	};
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -153,10 +168,15 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 		if (id == R.id.alarmManager1) {
 			t.setText("Wait for 30 seconds"); t.setDuration(Toast.LENGTH_SHORT); t.show();
 			alarmMgr = (android.app.AlarmManager)maContext.getSystemService(android.content.Context.ALARM_SERVICE);
-			Intent intent = new Intent(maContext, SettingsActivity.class);
-			alarmIntent = android.app.PendingIntent.getBroadcast(maContext, 0, intent, 0);
+//			intentSettingsActivity = new Intent(maContext, SettingsActivity.class); //Vl.explicit intent
+			intentSettingsActivity = new Intent();
+			ev1.append("intentSettingsActivity general action: " + intentSettingsActivity.getAction() + "\n");
+			intentSettingsActivity.setAction("com.example.test1pn.myAction1");
+			ev1.append("intentSettingsActivity general action: " + intentSettingsActivity.getAction() + "\n");
+			pendingIntent = android.app.PendingIntent.getBroadcast(maContext, 0, intentSettingsActivity, 0);
+            this.registerReceiver(receiver, new IntentFilter("com.example.test1pn.myAction1"));
 			alarmMgr.set(android.app.AlarmManager.ELAPSED_REALTIME_WAKEUP,
-					android.os.SystemClock.elapsedRealtime() + 30 * 1000, alarmIntent);
+					android.os.SystemClock.elapsedRealtime() + 30 * 1000, pendingIntent);
 		}
 		if (id == R.id.PowerManager) {
 			if (pm == null) {
