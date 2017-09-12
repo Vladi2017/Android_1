@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-
+//last allocated tag:Vladi14
 public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
     EditText et1; //Vl.editTextTCPlogger1
     private SocketChannel client = null;
@@ -37,6 +37,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         et1 = (EditText) findViewById(R.id.editTextTCPlogger1);
+        MainActivity.ev1.append("Vladi1.Test from TCPclient1Activity == TCPc1A\n");
         getMenuInflater().inflate(R.menu.menu1_tcpclient1activity, menu);
         return true;
     }
@@ -62,8 +63,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         } catch (final IOException e) {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    et1.append("\nVladi. got SocketChannel.open() IOException\n" + e.toString());
-                                    et1.append("\nVladi. receive thread not launched\n");
+                                    et1.append("\nVladi2. got SocketChannel.open() IOException\n" + e.toString());
+                                    et1.append("\nVladi3. receive thread not launched\n");
                                 }
                             });
                             return;
@@ -74,16 +75,16 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         } catch (final IOException e) {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    et1.append("\nVladi. got client.connect(isa) IOException, " + e.getMessage());
-                                    et1.append("\nVladi. receive thread not launched\n");
+                                    et1.append("\nVladi4. got client.connect(isa) IOException, " + e.getMessage());
+                                    et1.append("\nVladi5. receive thread not launched\n");
                                 }
                             });
                             return;
                         } catch (final Exception e) {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-                                    et1.append("\nVladi. got in client.connect(isa): " + e.toString());
-                                    et1.append("\nVladi. receive thread not launched\n");
+                                    et1.append("\nVladi6. got in client.connect(isa): " + e.toString());
+                                    et1.append("\nVladi7. receive thread not launched\n");
                                 }
                             });
                             return;
@@ -117,25 +118,27 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     try {
                         client.write(finalBytebuf);
                     } catch (IOException e) {
-                        e.printStackTrace();
-                        t.setText("Vladi.., we got an IOException in sendMessage(), leave..."); t.show();
+                        t.setText("Vladi8.., we got an IOException in sendMessage(), leave..."); t.show();
+                        MainActivity.ev1.append("Vladi8/TCPc1A.., we got an IOException in sendMessage(), close SocketChannel\n");
                         try {
                             client.close();
                         } catch (IOException e1) {
-                            e1.printStackTrace();
-                            t.setText("Vladi.., client.close() IOException"); t.show();
+                            t.setText("Vladi9.., client.close() IOException"); t.show();
+                            MainActivity.ev1.append("Vladi9/TCPc1A.., client.close() IOException\n");
                             return;
                         }
                         //        System.exit(0);
-                        t.setText("Vladi.., normally closed TCPclient1Activity"); t.show();
+                        t.setText("Vladi10.., normally closed TCPclient1Activity"); t.show();
+                        MainActivity.ev1.append("Vladi10/TCPc1A.., normally closed TCPclient1Activity\n");
                         finish();
                     } catch (Exception e) {
-                        t.setText("Vladi. caught: " + e.toString()); t.show();
+                        t.setText("Vladi11. caught: " + e.toString()); t.show();
+                        MainActivity.ev1.append("Vladi11/TCPc1A. caught: " + e.toString() + "\n");
                     }
                 }
             }.start();
         } else {
-            et1.append("\nVladi. The SocketChannel (the client) not created (is null)." +
+            et1.append("\nVladi12. The SocketChannel (the client) not created (is null)." +
                     " Are you connected?\n");
         }
     }
@@ -209,11 +212,11 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             ++i, nBytes, buf.position(), buf.limit(), buf.remaining()));
                     if (i > 10) return;
                 }
-            } catch (IOException e) {
-                Vsupport1.log(et1, "\nVladi.., we got an IOException in RecvThread.\n");
+            } catch (Exception e) {
+                Vsupport1.log(et1, "\nVladi13.., we got an Exception in RecvThread:" + e.toString() + "\n");
                 e.printStackTrace();
             }
-            Vsupport1.log(et1, "Vladi.., leave RecvThread.\n");
+            Vsupport1.log(et1, "Vladi14.., leave RecvThread.\n");
         }
     }
 }

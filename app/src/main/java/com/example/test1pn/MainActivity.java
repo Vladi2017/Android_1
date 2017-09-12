@@ -54,7 +54,7 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 	private static final String TAG1 = "MainActivity"; 
 	SecureRandom random = null;// V.default protected I think..
 	byte bytes[];
-	EditText ev1;
+	static EditText ev1;
 	MessageDigest digest = null;
 	MainActivity maContext;
 	CgetStrDiag newF;//V.newFragment Dialog based on alert dialog
