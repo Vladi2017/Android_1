@@ -74,8 +74,6 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 	android.content.res.Resources res;
 	android.os.PowerManager pm;
 	android.os.PowerManager.WakeLock wl;
-	private android.app.AlarmManager alarmMgr;
-	private android.app.PendingIntent pendingIntent;
 
 	private boolean ftimer_ElapsedTask_canceled = false;//V.f=flag
     Runnable timer1Runnable = new Runnable() {
@@ -154,6 +152,8 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
             }
         }
 		if (id == R.id.alarmManager1) {
+			android.app.AlarmManager alarmMgr;
+			android.app.PendingIntent pendingIntent;
 			Intent intentSettingsActivity;
 			BroadcastReceiver receiver = new BroadcastReceiver() {
 				@Override
