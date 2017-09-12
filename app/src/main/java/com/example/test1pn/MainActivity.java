@@ -134,18 +134,6 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 		return true;
 	}
 
-	Intent intentSettingsActivity;
-	BroadcastReceiver receiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			t.setText("Vladi3, Inside my broadcastReceiver"); t.setDuration(Toast.LENGTH_SHORT); t.show();
-			Vsupport1.log(ev1, "Vladi3, Inside my broadcastReceiver\n");
-			context.unregisterReceiver(this);
-			Intent intentLocal = new Intent(maContext, SettingsActivity.class); //Vl.explicit intent
-			startActivity(intentLocal);
-		}
-	};
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -166,6 +154,17 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
             }
         }
 		if (id == R.id.alarmManager1) {
+			Intent intentSettingsActivity;
+			BroadcastReceiver receiver = new BroadcastReceiver() {
+				@Override
+				public void onReceive(Context context, Intent intent) {
+					t.setText("Vladi3, Inside my broadcastReceiver"); t.setDuration(Toast.LENGTH_SHORT); t.show();
+					Vsupport1.log(ev1, "Vladi3, Inside my broadcastReceiver\n");
+					context.unregisterReceiver(this);
+					Intent intentLocal = new Intent(maContext, SettingsActivity.class); //Vl.explicit intent
+					startActivity(intentLocal);
+				}
+			};
 			t.setText("Wait for 30 seconds"); t.setDuration(Toast.LENGTH_SHORT); t.show();
 			alarmMgr = (android.app.AlarmManager)maContext.getSystemService(android.content.Context.ALARM_SERVICE);
 //			intentSettingsActivity = new Intent(maContext, SettingsActivity.class); //Vl.explicit intent
