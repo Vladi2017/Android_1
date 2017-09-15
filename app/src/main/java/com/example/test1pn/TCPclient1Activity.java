@@ -134,6 +134,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         //        System.exit(0);
                         t.setText("Vladi10.., normally closed TCPclient1Activity"); t.show();
                         MainActivity.ev1.append("Vladi10/TCPc1A.., normally closed TCPclient1Activity\n");
+                        try {Thread.sleep(2000);} catch (InterruptedException e1) {} //Vl.mentain MainActivity in backstack to update ev1
                         finish();
                     } catch (Exception e) {
                         t.setText("Vladi11. caught: " + e.toString()); t.show();

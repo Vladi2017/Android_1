@@ -18,5 +18,5 @@
         android:layout_height="match_parent"
         android:ems="10"
         android:gravity="top|fill_vertical"
-        android:inputType="textMultiLine|textNoSuggestions" />
+        android:inputType="text|textMultiLine|textNoSuggestions" />
 </LinearLayout>
