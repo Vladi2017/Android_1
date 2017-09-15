@@ -90,7 +90,11 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             return;
                         }
                         Vsupport1.log(et1, "done\n");
-                        if (client.isConnected()) receiveMessage(); //Vl.receive thread.
+                        if (client.isConnected()) {
+                            Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                                    .format(new java.util.Date()) + "\n");
+                            receiveMessage(); //Vl.receive thread.
+                        }
                     }
                 }.start();
                 break;
@@ -213,8 +217,13 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     if (i > 10) return;
                 }
             } catch (Exception e) {
-                Vsupport1.log(et1, "\nVladi13.., we got an Exception in RecvThread:" + e.toString() + "\n");
-                e.printStackTrace();
+                Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                        .format(new java.util.Date()) + "\n");
+                Vsupport1.log(et1, "\nVladi13.., we got an Exception in RecvThread: " + e.toString() + "\n");
+                StackTraceElement[] arrSTE = e.getStackTrace();
+                String textSTEs = "";
+                for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
+                Vsupport1.log(et1, textSTEs);
             }
             Vsupport1.log(et1, "Vladi14.., leave RecvThread.\n");
         }
