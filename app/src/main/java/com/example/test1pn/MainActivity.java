@@ -307,7 +307,7 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			startActivity(tcpClient1Intent);
 		}
 		if (id == R.id.intents1) {
-			Intent intent = new Intent(Intent.ACTION_PICK);
+			Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Files.getContentUri("internal"));
 			startActivityForResult(intent, REQ_FILE_PICK1);
 		}
 		return super.onOptionsItemSelected(item);

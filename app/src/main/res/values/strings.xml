@@ -18,7 +18,7 @@
     <string name="alarmManager1">11.AlarmManager1</string>
     <string name="intents1">12.Intents1</string>
     <string name="tcpClient1Activitywelcome">Vladi\'s TCPclient1Activity logger</string>
-    <string name="t1">ver.131\n
+    <string name="t1">ver.132\n
         1.cryptographically strong random number generator (RNG)\n
         2.compute SHA256 digest\n
         3.encode Hash MAC\n
