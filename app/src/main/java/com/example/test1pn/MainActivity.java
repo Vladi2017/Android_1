@@ -36,7 +36,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.media.RingtoneManager;
-import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
@@ -163,25 +162,15 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 					t.setText("Vladi3, Inside my broadcastReceiver"); t.setDuration(Toast.LENGTH_SHORT); t.show();
 					Vsupport1.log(ev1, "Vladi3, Inside my broadcastReceiver\n");
 					context.unregisterReceiver(this);
-					final android.net.Uri defUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-					final android.net.Uri actualDefUri = RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), RingtoneManager.TYPE_NOTIFICATION);
-					final android.net.Uri actualActivityDefUri = RingtoneManager.getActualDefaultRingtoneUri(maContext, RingtoneManager.TYPE_NOTIFICATION);
-					final android.media.Ringtone r = RingtoneManager.getRingtone(maContext, Settings.System.DEFAULT_NOTIFICATION_URI);
-					r.play();
+					final android.net.Uri mySoundUri1 = android.net.Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.alarm_beep_03_1);
+					android.media.Ringtone r = RingtoneManager.getRingtone(context, mySoundUri1);
 					ev1.post(new Runnable() {
 						@Override
 						public void run() {
-							ev1.append("Vladi4, defUri: " + defUri.getEncodedPath()
-									+ " " + defUri.toString() + "\n");
-							ev1.append("actualDefUri: " + actualDefUri.getEncodedPath()
-									+ " " + actualDefUri.toString() + "\n");
-							ev1.append("actualActivityDefUri: " + actualActivityDefUri.getEncodedPath()
-									+ " " + actualActivityDefUri.toString() + "\n");
-							ev1.append("DEFAULT_NOTIFICATION_URI: " + Settings.System.DEFAULT_NOTIFICATION_URI + "\n"
-									+ "NOTIFICATION_SOUND: " + Settings.System.NOTIFICATION_SOUND + "\n");
-							ev1.append("ringTone r title: " + r.getTitle(getApplicationContext()));
+							ev1.append("mySoundUri1=" + mySoundUri1 + "\n");
 						}
 					});
+					r.play();
 					Intent intentLocal = new Intent(maContext, SettingsActivity.class); //Vl.explicit intent
 					startActivity(intentLocal);
 				}
