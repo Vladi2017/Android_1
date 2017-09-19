@@ -307,8 +307,11 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			startActivity(tcpClient1Intent);
 		}
 		if (id == R.id.intents1) {
-			Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Files.getContentUri("internal"));
-			startActivityForResult(intent, REQ_FILE_PICK1);
+//			Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Files.getContentUri("internal"));
+			Intent pickIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
+			// Verify that the intent will resolve to an activity
+			if (pickIntent.resolveActivity(getPackageManager()) != null) startActivityForResult(pickIntent, REQ_FILE_PICK1);
+			else ev1.append("\nVladi5, the intent can't be resolved to any activity.");
 		}
 		return super.onOptionsItemSelected(item);
 	}
