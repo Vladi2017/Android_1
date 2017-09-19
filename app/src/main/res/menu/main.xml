@@ -63,4 +63,9 @@
         android:orderInCategory="110"
         android:title="@string/alarmManager1"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/intents1"
+        android:orderInCategory="111"
+        android:title="@string/intents1"
+        app:showAsAction="never"/>
 </menu>

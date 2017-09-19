@@ -13,6 +13,7 @@ package com.example.test1pn;
  * 9. resume this app from notification.
  * 10.TCPclient1.
  * 11.AlarmManager1. https://developer.android.com/training/scheduling/alarms.html#boot
+ * 12.Intents1. (action intents constants).
  * */
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -50,9 +51,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-//last allocated tag:Vladi4
+//last allocated tag:Vladi5
 public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
-	private static final String TAG1 = "MainActivity"; 
+	private static final String TAG1 = "MainActivity";
+	private static final int REQ_FILE_PICK1 = 1;
 	SecureRandom random = null;// V.default protected I think..
 	byte bytes[];
 	static EditText ev1;
@@ -304,9 +306,24 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			Intent tcpClient1Intent = new Intent(this, TCPclient1Activity.class);
 			startActivity(tcpClient1Intent);
 		}
+		if (id == R.id.intents1) {
+			Intent intent = new Intent(Intent.ACTION_PICK);
+			startActivityForResult(intent, REQ_FILE_PICK1);
+		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != RESULT_CANCELED) {
+			switch (requestCode) {
+				case REQ_FILE_PICK1:
+					ev1.append("Vladi5, FileURI: " + data.getData() + "\n");
+			}
+		} else {
+			ev1.append(String.format("Vladi5, requestCode %d returned resultCode %d\n", requestCode, resultCode));
+		}
+	}
+
 	Runnable runAtStpeTimer1 = new Runnable() {
 		private int i = 0;
 		private final String TAG1 = "runAtStpeTimer1";
