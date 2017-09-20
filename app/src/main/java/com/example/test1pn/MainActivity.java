@@ -51,7 +51,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-//last allocated tag:Vladi5
+//last allocated tag:Vladi6
 public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
 	private static final String TAG1 = "MainActivity";
 	private static final int REQ_FILE_PICK1 = 1;
@@ -307,7 +307,13 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			startActivity(tcpClient1Intent);
 		}
 		if (id == R.id.intents1) {
-			Intent pickIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+			android.net.Uri uri1 = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+			android.net.Uri uri2 = android.net.Uri.parse("content://vnd.android.cursor.dir/");
+			printUri(uri1);
+			Intent pickIntent = new Intent(Intent.ACTION_PICK);
+			pickIntent.setDataAndType(android.provider.MediaStore.Files.getContentUri("external"),"vnd.android.cursor.dir/*")
+					.addCategory(Intent.CATEGORY_DEFAULT);
+//			printUri(uri2);
 			// Verify that the intent will resolve to an activity
 			if (pickIntent.resolveActivity(getPackageManager()) != null) startActivityForResult(pickIntent, REQ_FILE_PICK1);
 			else ev1.append("\nVladi5, the intent can't be resolved to any activity.");
@@ -322,8 +328,21 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 					ev1.append("Vladi5, FileURI: " + data.getData() + "\n");
 			}
 		} else {
-			ev1.append(String.format("Vladi5, requestCode %d returned resultCode %d\n", requestCode, resultCode));
+			ev1.append(String.format("Vladi5, requestCode %d returned resultCode = RESULT_CANCELED\n", requestCode));
 		}
+	}
+
+	protected void printUri(android.net.Uri uri) {
+		ev1.append("\nVladi6, URI: " + uri);
+		ev1.append("\ntoString(): " + uri.toString());
+		ev1.append("\nencodedPath: " + uri.getEncodedPath());
+		ev1.append("\ndecodedPath: " + uri.getPath());
+		ev1.append("\nencodedAuthority: " + uri.getEncodedAuthority());
+		ev1.append("\ndecodedAuthority: " + uri.getAuthority());
+		ev1.append("\nencodedFragment: " + uri.getEncodedFragment());
+		ev1.append("\ndecodedFragment: " + uri.getFragment());
+		ev1.append("\nScheme: " + uri.getScheme());
+		ev1.append("\nHost: " + uri.getHost() + "\n");
 	}
 
 	Runnable runAtStpeTimer1 = new Runnable() {
