@@ -123,22 +123,24 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         client.write(finalBytebuf);
                     } catch (IOException e) {
                         t.setText("Vladi8.., we got an IOException in sendMessage(), leave..."); t.show();
-                        MainActivity.ev1.append("Vladi8/TCPc1A.., we got an IOException in sendMessage(), closing SocketChannel\n");
+                        Vsupport1.log(MainActivity.ev1, "Vladi8/TCPc1A.., we got an IOException in sendMessage(), closing SocketChannel..: " +
+                                e.toString() + "\n");
                         try {
                             client.close();
                         } catch (IOException e1) {
-                            t.setText("Vladi9.., client.close() IOException"); t.show();
+//                            t.setText("Vladi9.., client.close() IOException"); t.show();
                             MainActivity.ev1.append("Vladi9/TCPc1A.., client.close() IOException\n");
+                            Vsupport1.log(MainActivity.ev1, "Vladi9/TCPc1A.., SocketChannel.close() IOException..: +" +
+                                    e1.toString() + "\n");
                             return;
                         }
                         //        System.exit(0);
                         t.setText("Vladi10.., normally closed TCPclient1Activity"); t.show();
-                        MainActivity.ev1.append("Vladi10/TCPc1A.., normally closed TCPclient1Activity\n");
-                        try {Thread.sleep(2000);} catch (InterruptedException e1) {} //Vl.mentain MainActivity in backstack to update ev1
+                        Vsupport1.log(MainActivity.ev1, "Vladi10/TCPc1A.., normally closed TCPclient1Activity\n");
                         finish();
                     } catch (Exception e) {
                         t.setText("Vladi11. caught: " + e.toString()); t.show();
-                        MainActivity.ev1.append("Vladi11/TCPc1A. caught: " + e.toString() + "\n");
+                        Vsupport1.log(MainActivity.ev1, "Vladi11/TCPc1A. caught: " + e.toString() + "\n");
                     }
                 }
             }.start();
@@ -237,7 +239,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     }
                     Vsupport1.log(et1, String.format("Incomplete read %d, nBytes=%d; buf: pos=%d, limit=%d, remaining=%d",
                             ++i, nBytes, buf.position(), buf.limit(), buf.remaining()));
-                    if (i > 10) return;
+                    if (i > 3) return;
                 }
             } catch (Exception e) {
                 Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
