@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-//last allocated tag:Vladi14
+//last allocated tag:Vladi15
 public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
     EditText et1; //Vl.editTextTCPlogger1
     private SocketChannel client = null;
@@ -51,10 +51,10 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 startActivityForResult(i, 0);
                 return true;
             case R.id.connect:
-                final String ipAddr, tcpPort;
-                ipAddr = sharedPref.getString("server_address", "");
-                tcpPort = sharedPref.getString("server_port", "");
-                et1.append("Connect to: " + ipAddr + "." + tcpPort + " ....");
+                final String serverIpAddr, serverTcpPort;
+                serverIpAddr = sharedPref.getString("server_address", "");
+                serverTcpPort = sharedPref.getString("server_port", "");
+                et1.append("Connect to: " + serverIpAddr + "." + serverTcpPort + " ....");
                 new Thread() {
                     @Override
                     public void run() {
@@ -69,7 +69,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             });
                             return;
                         }
-                        InetSocketAddress isa = new InetSocketAddress(ipAddr, Integer.parseInt(tcpPort));
+                        InetSocketAddress isa = new InetSocketAddress(serverIpAddr, Integer.parseInt(serverTcpPort));
                         try {
                             client.connect(isa);
                         } catch (final IOException e) {
@@ -150,6 +150,19 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 
     @Override
     public void onDialogNegativeClick(CgetStrDiag dialog) {
+        MainActivity.ev1.append("Vladi15.Test2 from TCPc1A\n");
+        String msg = dialog.getUserInput();
+        if (msg.contentEquals("Vladi15"))
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        MainActivity.ev1.append("Vladi15, \n" + e.toString());
+                    }
+                    MainActivity.ev1.append("Vladi15.Test_3 from a TCPc1A thread != main activity thread\n");
+                }}.start();
 //        switch (uir) {
 //            case SHA256HMACenc:
 //                this.strVar1 = "";
@@ -199,12 +212,13 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             buf.limit(buf.capacity());
                             seq = buf.getInt(bufref1ro.capacity());
                             rcvDelay = buf.get(bl - 1);
-                            Vsupport1.log(et1, "keepalive" + seq + "delay" + rcvDelay + "\n");
+                            Vsupport1.log(et1, "ka" + seq + "d" + rcvDelay);
                             sendBuf.position(8);
                             sendBuf.putInt(seq);
                             sendBuf.put(sendBuf.capacity() - 1, (byte) (Integer.parseInt(sharedPref.getString("server_ka_interval","")) / 10));
                             sendBuf.clear();
                             nBytes = client.write(sendBuf);
+                            Vsupport1.log(et1, "; ack\n");
                         } else {
                             buf.limit(bl);
                             java.nio.CharBuffer charBuffer = decoder.decode(buf);

@@ -63,6 +63,7 @@ public class CgetStrDiag extends DialogFragment {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
                 // Send the negative button event back to the host activity
+				gotSeq = input.getText().toString();
                 mListener.onDialogNegativeClick(CgetStrDiag.this);
 			}
 		});
