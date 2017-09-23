@@ -16,7 +16,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-//last allocated tag:Vladi15
+//last allocated tag:Vladi17
 public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
     EditText et1; //Vl.editTextTCPlogger1
     private SocketChannel client = null;
@@ -237,8 +237,9 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         }
                         buf.clear();
                     }
-                    Vsupport1.log(et1, String.format("Incomplete read %d, nBytes=%d; buf: pos=%d, limit=%d, remaining=%d",
+                    Vsupport1.log(et1, String.format("Incomplete read %d, nBytes=%d; buf: pos=%d, limit=%d, remaining=%d\n",
                             ++i, nBytes, buf.position(), buf.limit(), buf.remaining()));
+                    if (nBytes == -1) throw new Exception("Vladi16 _Exception, read -1 Bytes => the channel has reached end-of-stream");
                     if (i > 3) return;
                 }
             } catch (Exception e) {
@@ -249,8 +250,15 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 String textSTEs = "";
                 for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
                 Vsupport1.log(et1, textSTEs);
+            } finally {
+                Vsupport1.log(et1, "Vladi16, closing socketChannel..\n");
+                try {
+                    client.close();
+                } catch (IOException e) {
+                    Vsupport1.log(et1, "\nVladi17.., socketChannel.close() IOException\n");
+                }
             }
-            Vsupport1.log(et1, "Vladi14.., leave RecvThread.\n");
+            Vsupport1.log(et1, "Vladi14.., socketChannel = " + client + ", leave RecvThread.\n");
         }
     }
 }
