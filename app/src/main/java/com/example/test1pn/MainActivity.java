@@ -104,6 +104,7 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 		t = Toast.makeText(getBaseContext(), "", Toast.LENGTH_SHORT);
 		t.setGravity(Gravity.CENTER, 0, 0);
 		timerHandler.postDelayed(timer1Runnable, 0);
+		android.util.Log.i(TAG1, "V.exits onCreate()");
 	}
 	@Override
 	protected void onStop() {

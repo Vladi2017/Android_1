@@ -123,7 +123,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         client.write(finalBytebuf);
                     } catch (IOException e) {
                         t.setText("Vladi8.., we got an IOException in sendMessage(), leave..."); t.show();
-                        MainActivity.ev1.append("Vladi8/TCPc1A.., we got an IOException in sendMessage(), close SocketChannel\n");
+                        MainActivity.ev1.append("Vladi8/TCPc1A.., we got an IOException in sendMessage(), closing SocketChannel\n");
                         try {
                             client.close();
                         } catch (IOException e1) {
@@ -152,17 +152,25 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     public void onDialogNegativeClick(CgetStrDiag dialog) {
         MainActivity.ev1.append("Vladi15.Test2 from TCPc1A\n");
         String msg = dialog.getUserInput();
-        if (msg.contentEquals("Vladi15"))
-            new Thread() {
+        if (msg.contains("Vladi15")) {
+            Thread th1 = new Thread() {
                 @Override
                 public void run() {
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
-                        MainActivity.ev1.append("Vladi15, \n" + e.toString());
+                        System.out.println("Vladi15 th1 thread, " + e.toString());//Vl.redirected to LogCat as Log.i()
+                        MainActivity.ev1.append("Vladi15 th1 thread, \n" + e.toString() + "\n");
                     }
                     MainActivity.ev1.append("Vladi15.Test_3 from a TCPc1A thread != main activity thread\n");
-                }}.start();
+                }
+            };
+            th1.start();
+            if (msg.contentEquals("Vladi157")) {
+                try {Thread.sleep(500);} catch (InterruptedException e1) {}
+                th1.interrupt();
+            }
+        }
 //        switch (uir) {
 //            case SHA256HMACenc:
 //                this.strVar1 = "";
