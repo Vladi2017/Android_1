@@ -27,7 +27,7 @@
         android:layout_below="@+id/textView1"
         android:ems="10"
         android:inputType="textMultiLine"
-        android:text="other_text1\n"
+        android:text="@string/app_ver1"
         android:textSize="@dimen/abc_action_bar_subtitle_text_size" >
 
         <requestFocus />

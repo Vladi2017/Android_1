@@ -117,5 +117,6 @@
     <orderEntry type="library" exported="" name="firebase-iid-10.0.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-common-10.0.1" level="project" />
     <orderEntry type="library" exported="" name="firebase-messaging-10.0.1" level="project" />
+    <orderEntry type="module" module-name="utils1lib" exported="" />
   </component>
 </module>

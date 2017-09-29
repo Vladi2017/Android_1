@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,27 +17,90 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-//last allocated tag:Vladi17
+
+
+//last allocated tag:Vladi20
 public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
     EditText et1; //Vl.editTextTCPlogger1
     private SocketChannel client = null;
+    private InetSocketAddress isa = null;
     public RecvThread rt = null;
     SharedPreferences sharedPref;
     CgetStrDiag newF;//V.newFragment Dialog based on alert dialog
     Toast t;
+    java.text.SimpleDateFormat sdfHMsS; //Vl.just HourMinuteSecondMilliseconds
+    java.text.SimpleDateFormat sdf; //Vl.YearMonthDayHourMinuteSecondMilliseconds
+//Vl. server ka receiving thread vars
+    private byte[] sendArr = {'r','e','s','p','o','n','s','e',0,0,0,0,'d','e','l','a','y',0};
+    private int seq = 327;
+    private ByteBuffer buf = ByteBuffer.allocate(32);
+    private ByteBuffer bufref1 = ByteBuffer.wrap("keepalive".getBytes());
+    private ByteBuffer bufref1ro = bufref1.asReadOnlyBuffer();
+    private ByteBuffer sendBuf = ByteBuffer.wrap(sendArr);
+    private Charset charset = Charset.forName("us-ascii");
+    private java.nio.charset.CharsetDecoder decoder = charset.newDecoder();
+    //telephony related
+    private android.telephony.TelephonyManager telephonyManager;
+    private PhoneStateListener phoneStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);// call the super class onCreate to complete the creation of activity like the view hierarchy
         setContentView(R.layout.activity_tcpclient1);
         t = Toast.makeText(getBaseContext(), "", Toast.LENGTH_LONG);
         t.setGravity(Gravity.CENTER, 0, 0);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        et1 = (EditText) findViewById(R.id.editTextTCPlogger1);
+        telephonyManager = (android.telephony.TelephonyManager) getSystemService(android.content.Context.TELEPHONY_SERVICE);
+        phoneStateListener = new PhoneStateListener();
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE
+                | PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
+        sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        sdfHMsS = new java.text.SimpleDateFormat("HH:mm:ss.SSS");
+    }
+    @Override
+    protected void onStart() {
+        super.onStart(); //Derived classes must call through to the super class's implementation of this method.(Android doc)
+        Vsupport1.log(et1, "V.from onStart()\n");
+    }
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first(Android doc)(https://developer.android.com/guide/components/activities/activity-lifecycle.html)
+        Vsupport1.log(et1, "V.from onResume()\n");
+    }
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first (Android doc)
+        Vsupport1.log(et1, "V.from onPause()\n");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();// call the superclass method first (Android doc)
+        Vsupport1.log(et1, "V.from OnStop()\n");
+    }
+    @Override
+    public void onBackPressed() {
+        final ro.vladi.utils1lib.ChooseDialog cd = new ro.vladi.utils1lib.ChooseDialog(this);
+        cd.set("Reconfirm", "Leave Activity?", "Yes", "No");
+        new Thread() {
+            @Override
+            public void run() {
+                if (cd.get()) {
+                    if (client != null) try {
+                        client.close();
+                    } catch (IOException e) {
+                        Vsupport1.log(MainActivity.ev1, "Vladi20/TCPc1A.., SocketChannel.close() IOException on backButton: +" +
+                                e.toString() + "\n");
+                    }
+                    TCPclient1Activity.this.finish();
+                }
+            }
+        }.start();
+//        ChooseDialog cd = new ChooseDialog();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        et1 = (EditText) findViewById(R.id.editTextTCPlogger1);
         MainActivity.ev1.append("Vladi1.Test from TCPclient1Activity == TCPc1A\n");
         getMenuInflater().inflate(R.menu.menu1_tcpclient1activity, menu);
         return true;
@@ -48,7 +112,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         switch (id) {
             case R.id.settings1:
                 i = new Intent(this, SettingsActivity.class);
-                startActivityForResult(i, 0);
+                startActivity(i);
                 return true;
             case R.id.connect:
                 final String serverIpAddr, serverTcpPort;
@@ -59,7 +123,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     @Override
                     public void run() {
                         try {
-                            client = SocketChannel.open();
+                            if (client == null) client = SocketChannel.open();
                         } catch (final IOException e) {
                             runOnUiThread(new Runnable() {
                                 public void run() {
@@ -69,7 +133,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             });
                             return;
                         }
-                        InetSocketAddress isa = new InetSocketAddress(serverIpAddr, Integer.parseInt(serverTcpPort));
+                        if (isa == null) isa = new InetSocketAddress(serverIpAddr, Integer.parseInt(serverTcpPort));
                         try {
                             client.connect(isa);
                         } catch (final IOException e) {
@@ -93,7 +157,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         if (client.isConnected()) {
                             Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                                     .format(new java.util.Date()) + "\n");
-                            receiveMessage(); //Vl.receive thread.
+                            kaLoop(); //Vl.receive thread.
                         }
                     }
                 }.start();
@@ -129,7 +193,6 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             client.close();
                         } catch (IOException e1) {
 //                            t.setText("Vladi9.., client.close() IOException"); t.show();
-                            MainActivity.ev1.append("Vladi9/TCPc1A.., client.close() IOException\n");
                             Vsupport1.log(MainActivity.ev1, "Vladi9/TCPc1A.., SocketChannel.close() IOException..: +" +
                                     e1.toString() + "\n");
                             return;
@@ -142,6 +205,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         t.setText("Vladi11. caught: " + e.toString()); t.show();
                         Vsupport1.log(MainActivity.ev1, "Vladi11/TCPc1A. caught: " + e.toString() + "\n");
                     }
+                    Vsupport1.log(et1, "Vladi19. sent: " + finalBytebuf + "\n");
                 }
             }.start();
         } else {
@@ -182,7 +246,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 //        }
     }
 
-    private void receiveMessage() {
+    private void kaLoop() {//Vl.KAs are sending by the sever
         rt = new RecvThread("Receive THread", client);
         rt.start();
     }
@@ -196,16 +260,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             sc = client;
         }
         public void run() {
-            byte[] sendArr = {'r','e','s','p','o','n','s','e',0,0,0,0,'d','e','l','a','y',0};
-            int seq = 327, rcvDelay;
             System.out.println("Inside receivemsg");
             int nBytes, i = 0;
-            ByteBuffer buf = ByteBuffer.allocate(1024);
-            ByteBuffer bufref1 = ByteBuffer.wrap("keepalive".getBytes());
-            ByteBuffer bufref1ro = bufref1.asReadOnlyBuffer();
-            ByteBuffer sendBuf = ByteBuffer.wrap(sendArr);
-            Charset charset = Charset.forName("us-ascii");
-            java.nio.charset.CharsetDecoder decoder = charset.newDecoder();
             try {
                 while (val) {
                     while ((nBytes = client.read(buf)) > 5) {
@@ -221,7 +277,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         if (0 == bufref1ro.compareTo(buf)) {
                             buf.limit(buf.capacity());
                             seq = buf.getInt(bufref1ro.capacity());
-                            rcvDelay = buf.get(bl - 1);
+                            int rcvDelay = buf.get(bl - 1);
                             Vsupport1.log(et1, "ka" + seq + "d" + rcvDelay);
                             sendBuf.position(8);
                             sendBuf.putInt(seq);
@@ -243,22 +299,62 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     if (i > 3) return;
                 }
             } catch (Exception e) {
-                Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
                         .format(new java.util.Date()) + "\n");
                 Vsupport1.log(et1, "\nVladi13.., we got an Exception in RecvThread: " + e.toString() + "\n");
                 StackTraceElement[] arrSTE = e.getStackTrace();
                 String textSTEs = "";
                 for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
                 Vsupport1.log(et1, textSTEs);
-            } finally {
-                Vsupport1.log(et1, "Vladi16, closing socketChannel..\n");
-                try {
-                    client.close();
-                } catch (IOException e) {
-                    Vsupport1.log(et1, "\nVladi17.., socketChannel.close() IOException\n");
-                }
+                Vsupport1.log(et1, "SocketChannel isConnected() returns " + client.isConnected() + "\n");
             }
+//            finally {
+//                Vsupport1.log(et1, "Vladi16, closing socketChannel..\n");
+//                try {
+//                    client.close();
+//                } catch (IOException e) {
+//                    Vsupport1.log(et1, "\nVladi17.., socketChannel.close() IOException\n");
+//                }
+//            }
             Vsupport1.log(et1, "Vladi14.., socketChannel = " + client + ", leave RecvThread.\n");
+        }
+    }
+
+    private class PhoneStateListener extends android.telephony.PhoneStateListener {
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            switch (state) {
+                case TelephonyManager.CALL_STATE_IDLE:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_IDLE\n");
+                    break;
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_OFFHOOK\n");
+                    break;
+                case TelephonyManager.CALL_STATE_RINGING:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_RINGING\n");
+                    break;
+                default:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_UNKNOWN\n");
+            }
+        }
+        @Override
+        public void onDataConnectionStateChanged(int state) {
+            switch (state) {
+                case TelephonyManager.DATA_DISCONNECTED:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_DISCONNECTED\n");
+                    break;
+                case TelephonyManager.DATA_CONNECTING:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_CONNECTING\n");
+                    break;
+                case TelephonyManager.DATA_CONNECTED:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_CONNECTED\n");
+                    break;
+                case TelephonyManager.DATA_SUSPENDED:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_SUSPENDED\n");
+                    break;
+                default:
+                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_STATE_UNKNOWN\n");
+            }
         }
     }
 }
