@@ -159,7 +159,7 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			android.app.AlarmManager alarmMgr;
 			android.app.PendingIntent pendingIntent;
 			Intent intentSettingsActivity;
-			BroadcastReceiver receiver = new BroadcastReceiver() {
+			BroadcastReceiver receiver = new BroadcastReceiver() {//receiver is local in onOptionsItemSelected().., still is reachable from the OS.. hmm
 				@Override
 				public void onReceive(Context context, Intent intent) {
 					t.setText("Vladi3, Inside my broadcastReceiver"); t.setDuration(Toast.LENGTH_SHORT); t.show();
