@@ -272,7 +272,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             @Override
             public void run() {
                 try {
-                    if (sc == null) sc = SocketChannel.open();
+                    if (sc == null || !sc.isOpen()) sc = SocketChannel.open();
                 } catch (final IOException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -284,13 +284,13 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     return;
                 }
                 if (isa == null) isa = new InetSocketAddress(serverIpAddr, Integer.parseInt(serverTcpPort));
-                Vsupport1.log(et1, "Vl25.., InetSocketAddress isa = " + TCPclient1Activity.this.isa + "\n");
                 try {
                     sc.connect(isa);
                 } catch (final IOException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            et1.append("\nVladi4. got sc.connect(isa) IOException, " + e.getMessage());
+                            et1.append("\nVladi4. got sc.connect(isa) IOException, " + e.toString() +
+                                    ", Throwable detail message: " + e.getMessage());
                             et1.append("\nVladi5. receive thread not launched\n");
                         }
                     });
@@ -462,10 +462,10 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
                         .format(new java.util.Date()) + "\n");
                 Vsupport1.log(et1, "\nVladi13.., we got an Exception in RecvThread: " + e.toString() + "\n");
-                StackTraceElement[] arrSTE = e.getStackTrace();
-                String textSTEs = "";
-                for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
-                Vsupport1.log(et1, textSTEs);
+//                StackTraceElement[] arrSTE = e.getStackTrace();
+//                String textSTEs = "";
+//                for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
+//                Vsupport1.log(et1, textSTEs);
                 Vsupport1.log(et1, "SocketChannel isConnected() returns " + TCPclient1Activity.this.sc.isConnected() + "\n");
                 tcpFSM(EVENT.SERVER_DISCONNECTED);
             }
@@ -477,7 +477,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 //                    Vsupport1.log(et1, "\nVladi17.., socketChannel.close() IOException\n");
 //                }
 //            }
-            Vsupport1.log(et1, "Vladi14.., socketChannel = " + TCPclient1Activity.this.sc + ", leave RecvThread.\n");
+            Vsupport1.log(et1, "Vl14.., InetSocketAddress isa = " + TCPclient1Activity.this.isa.toString() + "\n");
+            Vsupport1.log(et1, "Vl14.., socketChannel sc = " + TCPclient1Activity.this.sc.toString() + ", leave RecvThread.\n");
         }
     }
 
