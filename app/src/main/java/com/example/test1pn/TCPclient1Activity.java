@@ -24,7 +24,7 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 
 enum TCP_STATE {NOT_CONNECTED, PRE_CONNECTING, CONNECTING, CONNECTED}
-enum EVENT {STATE_OUT_OF_SERVICE, CALL_STATE_RINGING, DataConnectivity_UP, OptionsMenuItemCONNECT,
+enum EVENT {STATE_OUT_OF_SERVICE, CALL_STATE_RINGING, CALL_STATE_OFFHOOK, DataConnectivity_UP, OptionsMenuItemCONNECT,
     TCP_CONNECTING_FAILED, ActiveNetworkConnectedConfirmation, NO_ActiveNetworkConnectedConfirmation, TCP_CONNECTED,
     SERVER_DISCONNECTED, TCP_HALF_OPEN}
 //last allocated tag:Vladi25
@@ -39,10 +39,12 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     java.text.SimpleDateFormat sdfHMsS; //Vl.just HourMinuteSecondMilliseconds
     java.text.SimpleDateFormat sdf; //Vl.YearMonthDayHourMinuteSecondMilliseconds
     TCP_STATE tcpState;
+    //Vl.enum EVENT related
     boolean fTCP_AUTO_CONNECT = false; //Vl. f=flag
     final int TCP_FAIL_MAX_AUTO_RECONNECT = 3; //TODO: this should be SharedPreferences
-    int cntReconnect = 0;
+    int cntReconnect;
     private boolean fTCP_FAIL_ONLY;//Vl.suspicious redundant, we can test cntReconnect > 0
+    boolean wasCellularCall = false;
     //media
     android.net.Uri alarm1URI = null;
     android.media.Ringtone rt1;
@@ -100,6 +102,12 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         Vsupport1.log(et1, "V.from OnStop()\n");
     }
     @Override
+    protected void onDestroy() {
+        Vsupport1.log(MainActivity.ev1, "\nVl./TCPc1A., from onDestroy()");
+        this.unregisterReceiver(connectivityEventsReceiver);
+        super.onDestroy();
+    }
+    @Override
     public void onBackPressed() {
         final ro.vladi.utils1lib.ChooseDialog cd = new ro.vladi.utils1lib.ChooseDialog(this);
         cd.set("Reconfirm", "Leave Activity?", "Yes", "No");
@@ -127,6 +135,14 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         return true;
     }
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem mi = menu.findItem(R.id.connect);
+        if (fTCP_AUTO_CONNECT) mi.setEnabled(false);
+        else mi.setEnabled(true);
+        return true;
+    }
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         Intent i;
@@ -137,6 +153,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 return true;
             case R.id.connect:
                 fTCP_AUTO_CONNECT = true;
+                cntReconnect = 0;
                 tcpFSM(EVENT.OptionsMenuItemCONNECT);
                 break;
             case  R.id.mess1: //Vl.sending one line message
@@ -176,16 +193,25 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         tcpState = TCP_STATE.CONNECTING;
                         break;
                     case DataConnectivity_UP:
-                        if (!fTCP_AUTO_CONNECT) return;
-                        if (alarmMgr == null) alarmMgr = (android.app.AlarmManager)this.getSystemService(android.content.Context.ALARM_SERVICE);
-                        if (testDataChannelIntent == null) testDataChannelIntent = new Intent("com.example.test1pn.testDataChannelAction");
-                        if (testDataChannelPendingIntent == null) testDataChannelPendingIntent =
-                                android.app.PendingIntent.getBroadcast(this, 0, testDataChannelIntent, 0);
-                        if (testDataChannelBR == null) testDataChannelBR = new TestDataChannelBR();
-                        this.registerReceiver(testDataChannelBR, new IntentFilter("com.example.test1pn.testDataChannelAction"));
-                        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, android.os.SystemClock.elapsedRealtime() + 60000,
-                                testDataChannelPendingIntent);
-                        tcpState = TCP_STATE.PRE_CONNECTING;
+                        if (wasCellularCall) {
+                            wasCellularCall = false;
+                            tcpConnect();
+                            tcpState = TCP_STATE.CONNECTING;
+                        } else {
+                            if (!fTCP_AUTO_CONNECT) return;
+                            if (alarmMgr == null)
+                                alarmMgr = (android.app.AlarmManager) this.getSystemService(android.content.Context.ALARM_SERVICE);
+                            if (testDataChannelIntent == null)
+                                testDataChannelIntent = new Intent("com.example.test1pn.testDataChannelAction");
+                            if (testDataChannelPendingIntent == null) testDataChannelPendingIntent =
+                                    android.app.PendingIntent.getBroadcast(this, 0, testDataChannelIntent, 0);
+                            if (testDataChannelBR == null)
+                                testDataChannelBR = new TestDataChannelBR();
+                            this.registerReceiver(testDataChannelBR, new IntentFilter("com.example.test1pn.testDataChannelAction"));
+                            alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, android.os.SystemClock.elapsedRealtime() + 60000,
+                                    testDataChannelPendingIntent);
+                            tcpState = TCP_STATE.PRE_CONNECTING;
+                        }
                         break;
                 }
                 break;
@@ -207,6 +233,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             case CONNECTING:
                 switch (event) {
                     case TCP_CONNECTED:
+                        fTCP_FAIL_ONLY = false;
+                        cntReconnect = 0;
                         tcpState = TCP_STATE.CONNECTED;
                         break;
                     case TCP_CONNECTING_FAILED:
@@ -214,8 +242,6 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             if (++cntReconnect <= TCP_FAIL_MAX_AUTO_RECONNECT) tcpConnect(); //Vl.stay CONNECTING
                             else {
                                 fTCP_AUTO_CONNECT = false;
-                                fTCP_FAIL_ONLY = false;
-                                cntReconnect = 0;
                                 tcpState = TCP_STATE.NOT_CONNECTED;
                             }
                         else tcpState = TCP_STATE.NOT_CONNECTED; //Vl.for STATE_OUT_OF_SERVICE
@@ -225,6 +251,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             case CONNECTED:
                 switch (event) {
                     case CALL_STATE_RINGING:
+                    case CALL_STATE_OFFHOOK:
+                        wasCellularCall = true;
                         if (true) {//Vl.here we should check if we are in GPRS mode
                             try {
                                 if (sc.isConnected()) sc.close(); //Vl.hopefully we have enough time to send a valid TCP SYN flag to tcpServer_1
@@ -243,7 +271,6 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     case TCP_HALF_OPEN:
                         closeSocketChannel();
                         fTCP_FAIL_ONLY = true;
-                        cntReconnect++;
                         tcpConnect();
                         tcpState = TCP_STATE.CONNECTING;
                 }
@@ -490,6 +517,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_IDLE\n");
                     break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
+                    tcpFSM(EVENT.CALL_STATE_OFFHOOK);
                     Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_OFFHOOK\n");
                     break;
                 case TelephonyManager.CALL_STATE_RINGING:
