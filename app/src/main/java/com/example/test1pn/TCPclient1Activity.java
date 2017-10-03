@@ -84,22 +84,22 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     @Override
     protected void onStart() {
         super.onStart(); //Derived classes must call through to the super class's implementation of this method.(Android doc)
-        Vsupport1.log(et1, "V.from onStart()\n");
+        Vsupport1.log(et1, "\nV.from onStart()");
     }
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first(Android doc)(https://developer.android.com/guide/components/activities/activity-lifecycle.html)
-        Vsupport1.log(et1, "V.from onResume()\n");
+        Vsupport1.log(et1, "\nV.from onResume()");
     }
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first (Android doc)
-        Vsupport1.log(et1, "V.from onPause()\n");
+        Vsupport1.log(et1, "\nV.from onPause()");
     }
     @Override
     protected void onStop() {
         super.onStop();// call the superclass method first (Android doc)
-        Vsupport1.log(et1, "V.from OnStop()\n");
+        Vsupport1.log(et1, "\nV.from OnStop()");
     }
     @Override
     protected void onDestroy() {
@@ -119,8 +119,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     if (sc != null) try {
                         sc.close();
                     } catch (IOException e) {
-                        Vsupport1.log(MainActivity.ev1, "Vladi20/TCPc1A.., SocketChannel.close() IOException on backButton: +" +
-                                e.toString() + "\n");
+                        Vsupport1.log(MainActivity.ev1, "\nVladi20/TCPc1A.., SocketChannel.close() IOException on backButton: +" +
+                                e.toString());
                     }
                     TCPclient1Activity.this.finish();
                 }
@@ -131,7 +131,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        MainActivity.ev1.append("Vladi1.Test from TCPclient1Activity == TCPc1A\n");
+        MainActivity.ev1.append("\nVladi1.Test from TCPclient1Activity == TCPc1A");
         getMenuInflater().inflate(R.menu.menu1_tcpclient1activity, menu);
         return true;
     }
@@ -267,8 +267,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             try {
                                 if (sc.isConnected()) sc.close(); //Vl.hopefully we have enough time to send a valid TCP SYN flag to tcpServer_1
                             } catch (Exception ex) {                //RecvThread will die anyway
-                                Vsupport1.log(et1, "Vladi23.., SocketChannel.close() (IO)Exception when CONNECTED/CALL_STATE_RINGING: +" +
-                                        ex.toString() + "\n");
+                                Vsupport1.log(et1, "\nVladi23.., SocketChannel.close() (IO)Exception when CONNECTED/CALL_STATE_RINGING: +" +
+                                        ex.toString());
                             }
                             tcpState = TCP_STATE.NOT_CONNECTED;
                         }
@@ -294,8 +294,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             if (sc.isConnected()) sc.close();
             //Vl.hopefully we have enough time to send a valid TCP SYN flag to tcpServer_1 when STATE_OUT_OF_SERVICE
         } catch (Exception ex) {//RecvThread will die anyway
-            Vsupport1.log(et1, "Vladi23.., SocketChannel.close() (IO)Exception when CONNECTED/STATE_OUT_OF_SERVICE: +" +
-                    ex.toString() + "\n");
+            Vsupport1.log(et1, "\nVladi23.., SocketChannel.close() (IO)Exception when CONNECTED/STATE_OUT_OF_SERVICE: +" +
+                    ex.toString());
         }
         if (alarm1URI == null) alarm1URI = android.net.Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.alarm_beep_03_1);
         if (rt1 == null) rt1 = android.media.RingtoneManager.getRingtone(this, alarm1URI);
@@ -310,7 +310,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         }
         serverIpAddr = sharedPref.getString("server_address", "");
         serverTcpPort = sharedPref.getString("server_port", "");
-        et1.append("Connect to: " + serverIpAddr + "." + serverTcpPort + " ....");
+        et1.append("\nConnecting to: " + serverIpAddr + "." + serverTcpPort + " ....");
         new Thread() {
             @Override
             public void run() {
@@ -333,7 +333,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     runOnUiThread(new Runnable() {
                         public void run() {
                             et1.append("\nVladi4. got sc.connect(isa) IOException, " + e.toString() +
-                                    ", Throwable detail message: " + e.getMessage());
+                                    ", Vl4.Throwable detail message: " + e.getMessage());
                             et1.append("\nVladi5. receive thread not launched\n");
                         }
                     });
@@ -377,23 +377,23 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         sc.write(finalBytebuf);
                     } catch (IOException e) {
                         t.setText("Vladi8.., we got an IOException in sendMessage(), leave..."); t.show();
-                        Vsupport1.log(et1, "Vladi8.., we got an IOException in sendMessage(), closing SocketChannel..: " +
-                                e.toString() + "\n");
+                        Vsupport1.log(et1, "\nVladi8.., we got an IOException in sendMessage(), closing SocketChannel..: " +
+                                e.toString());
                         try {
                             sc.close();
                         } catch (IOException e1) {
 //                            t.setText("Vladi9.., sc.close() IOException"); t.show();
-                            Vsupport1.log(et1, "Vladi9.., SocketChannel.close() IOException..: +" +
-                                    e1.toString() + "\n");
+                            Vsupport1.log(et1, "\nVladi9.., SocketChannel.close() IOException..: +" +
+                                    e1.toString());
                             return;
                         }
                         //        System.exit(0);
                     } catch (Exception e) {
                         t.setText("Vladi11. caught: " + e.toString()); t.show();
-                        Vsupport1.log(MainActivity.ev1, "Vladi11 caught: " + e.toString() + "\n");
+                        Vsupport1.log(MainActivity.ev1, "\nVladi11 caught: " + e.toString());
                         return;
                     }
-                    Vsupport1.log(et1, "Vladi19. sent: " + finalBytebuf.array().toString() + "\n");
+                    Vsupport1.log(et1, "\nVladi19. sent: " + finalBytebuf.array().toString());
                     if (finalMsg.contains("down")) fTCP_AUTO_CONNECT = false;
                 }
             }.start();
@@ -405,7 +405,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 
     @Override
     public void onDialogNegativeClick(CgetStrDiag dialog) {
-        MainActivity.ev1.append("Vladi15.Test2 from TCPc1A\n");
+        MainActivity.ev1.append("\nVladi15.Test2 from TCPc1A");
         String msg = dialog.getUserInput();
         if (msg.contains("Vladi15")) {
             Thread th1 = new Thread() {
@@ -417,7 +417,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         System.out.println("Vladi15 th1 thread, " + e.toString());//Vl.redirected to LogCat as Log.i()
                         MainActivity.ev1.append("Vladi15 th1 thread, \n" + e.toString() + "\n");
                     }
-                    MainActivity.ev1.append("Vladi15.Test_3 from a TCPc1A thread != main activity thread\n");
+                    MainActivity.ev1.append("\nVladi15.Test_3 from a TCPc1A thread != main activity thread");
                 }
             };
             th1.start();
@@ -454,8 +454,10 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             int previousKAi = 20000, kAinterval = 20000; //must be correlated with Erlang tcpServer_1 loop(Socket,start) delay
             try {
                 while (val) {
-                    if (kAinterval != previousKAi)
+                    if (kAinterval != previousKAi) {
                         sc.socket().setSoTimeout(kAinterval + kAinterval / 2);
+                        previousKAi = kAinterval;
+                    }
                     while ((nBytes = TCPclient1Activity.this.sc.read(buf)) > 5) {
                         if (TCPclient1Activity.this.sc.isBlocking()) {
                             System.out.println("V.The sc SocketChannel is in blocking mode.");
@@ -489,27 +491,27 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         }
                         buf.clear();
                     }
-                    Vsupport1.log(et1, String.format("Incomplete read %d, nBytes=%d; buf: pos=%d, limit=%d, remaining=%d\n",
+                    Vsupport1.log(et1, String.format("\nIncomplete read %d, nBytes=%d; buf: pos=%d, limit=%d, remaining=%d",
                             ++i, nBytes, buf.position(), buf.limit(), buf.remaining()));
                     if (nBytes == -1)
                         throw new Exception("Vladi16 _Exception, read -1 Bytes => the channel has reached end-of-stream");
                     if (i > 3) return;
                 }
             } catch (java.net.SocketTimeoutException ex) {
-                Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-                        .format(new java.util.Date()) + "\n");
-                Vsupport1.log(et1, "\nVl24.., got SocketTimeoutException in RecvThread: " + ex.toString() + "\n");
-                Vsupport1.log(et1, "SocketChannel isConnected() returns " + TCPclient1Activity.this.sc.isConnected() + "\n");
+                Vsupport1.log(et1, "\n" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                        .format(new java.util.Date()));
+                Vsupport1.log(et1, "\nVl24.., got SocketTimeoutException in RecvThread: " + ex.toString());
+                Vsupport1.log(et1, "\nVl24.SocketChannel isConnected() returns " + TCPclient1Activity.this.sc.isConnected());
                 tcpFSM(EVENT.TCP_HALF_OPEN);
             } catch (Exception e) {
-                Vsupport1.log(et1, new java.text.SimpleDateFormat("\nVl13. yyyy-MM-dd HH:mm:ss.SSS")
-                        .format(new java.util.Date()) + "\n");
-                Vsupport1.log(et1, "\nVl13.., we got an Exception in RecvThread: " + e.toString() + "\n");
+                Vsupport1.log(et1, "\nVl13." + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                        .format(new java.util.Date()));
+                Vsupport1.log(et1, "\nVl13.., we got an Exception in RecvThread: " + e.toString());
 //                StackTraceElement[] arrSTE = e.getStackTrace();
 //                String textSTEs = "";
 //                for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
 //                Vsupport1.log(et1, textSTEs);
-                Vsupport1.log(et1, "SocketChannel isConnected() returns " + TCPclient1Activity.this.sc.isConnected() + "\n");
+                Vsupport1.log(et1, "\nVl13.SocketChannel isConnected() returns " + TCPclient1Activity.this.sc.isConnected());
                 tcpFSM(EVENT.SERVER_DISCONNECTED);
             }
 //            finally {
@@ -530,54 +532,47 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         final public void onCallStateChanged(int state, String incomingNumber) {
             switch (state) {
                 case TelephonyManager.CALL_STATE_IDLE:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_IDLE\n");
-                    break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_IDLE"); break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     wasCellularCall = true;
                     tcpFSM(EVENT.CALL_STATE_OFFHOOK);
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_OFFHOOK\n");
-                    break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_OFFHOOK"); break;
                 case TelephonyManager.CALL_STATE_RINGING:
                     wasCellularCall = true;
                     tcpFSM(EVENT.CALL_STATE_RINGING);
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_RINGING\n");
-                    break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_RINGING"); break;
                 default:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_UNKNOWN\n");
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_UNKNOWN");
             }
         }
         @Override
         final public void onDataConnectionStateChanged(int state) {
             switch (state) {
                 case TelephonyManager.DATA_DISCONNECTED:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vl18, DATA_DISCONNECTED\n");
-                    break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl18, DATA_DISCONNECTED"); break;
                 case TelephonyManager.DATA_CONNECTING:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_CONNECTING\n");
-                    break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_CONNECTING"); break;
                 case TelephonyManager.DATA_CONNECTED:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_CONNECTED\n");
-                    break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_CONNECTED"); break;
                 case TelephonyManager.DATA_SUSPENDED:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_SUSPENDED\n");
-                    break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_SUSPENDED"); break;
                 default:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vl18, DATA_STATE_UNKNOWN\n");
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl18, DATA_STATE_UNKNOWN");
             }
         }
         @Override
         final public void onServiceStateChanged(ServiceState ss) {
             switch (ss.getState()) {
                 case ServiceState.STATE_EMERGENCY_ONLY:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_EMERGENCY_ONLY\n"); break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_EMERGENCY_ONLY"); break;
                 case ServiceState.STATE_IN_SERVICE:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_IN_SERVICE\n"); break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_IN_SERVICE"); break;
                 case ServiceState.STATE_OUT_OF_SERVICE:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_OUT_OF_SERVICE\n"); break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_OUT_OF_SERVICE"); break;
                 case ServiceState.STATE_POWER_OFF:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_POWER_OFF\n"); break;
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_POWER_OFF"); break;
                 default:
-                    Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_UNKNOWN\n");
+                    Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_UNKNOWN");
             }
         }
     }
@@ -587,10 +582,10 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 //            Vsupport1.log(et1, "Vl21, got: " + intent.getAction());
 //            android.net.NetworkInfo networkInfo = intent.getParcelableExtra(android.net.ConnectivityManager.EXTRA_NETWORK_INFO);
             boolean noDataConnectivity = intent.getBooleanExtra(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-            Vsupport1.log(et1, sdfHMsS.format(System.currentTimeMillis()));
-            if (noDataConnectivity) Vsupport1.log(et1, ": Vl21, DataConnectivity_DOWN\n");
+            Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()));
+            if (noDataConnectivity) Vsupport1.log(et1, ": Vl21, DataConnectivity_DOWN");
             else {
-                Vsupport1.log(et1, ": Vl21, DataConnectivity_UP\n");
+                Vsupport1.log(et1, ": Vl21, DataConnectivity_UP");
                 tcpFSM(EVENT.DataConnectivity_UP);
             }
         }
