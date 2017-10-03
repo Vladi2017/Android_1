@@ -115,6 +115,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             @Override
             public void run() {
                 if (cd.get()) {
+                    fTCP_AUTO_CONNECT = false;
                     if (sc != null) try {
                         sc.close();
                     } catch (IOException e) {
@@ -269,10 +270,12 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         break;
                     case SERVER_DISCONNECTED:
                     case TCP_HALF_OPEN:
-                        closeSocketChannel();
-                        fTCP_FAIL_ONLY = true;
-                        tcpConnect();
-                        tcpState = TCP_STATE.CONNECTING;
+                        if (fTCP_AUTO_CONNECT) {
+                            closeSocketChannel();
+                            fTCP_FAIL_ONLY = true;
+                            tcpConnect();
+                            tcpState = TCP_STATE.CONNECTING;
+                        }
                 }
         }
     }
@@ -461,7 +464,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             sendBuf.put(sendBuf.capacity() - 1, (byte) (kAinterval / 10));
                             sendBuf.clear();
                             nBytes = TCPclient1Activity.this.sc.write(sendBuf);
-                            Vsupport1.log(et1, "; ack\n");
+                            Vsupport1.log(et1, "ack ");
                         } else {
                             buf.limit(bl);
                             java.nio.CharBuffer charBuffer = decoder.decode(buf);
@@ -504,8 +507,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 //                    Vsupport1.log(et1, "\nVladi17.., socketChannel.close() IOException\n");
 //                }
 //            }
-            Vsupport1.log(et1, "Vl14.., InetSocketAddress isa = " + TCPclient1Activity.this.isa.toString() + "\n");
-            Vsupport1.log(et1, "Vl14.., socketChannel sc = " + TCPclient1Activity.this.sc.toString() + ", leave RecvThread.\n");
+//            Vsupport1.log(et1, "Vl14.., InetSocketAddress isa = " + TCPclient1Activity.this.isa.toString() + "\n");
+//            Vsupport1.log(et1, "Vl14.., socketChannel sc = " + TCPclient1Activity.this.sc.toString() + ", leave RecvThread.\n");
         }
     }
 
