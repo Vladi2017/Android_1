@@ -27,7 +27,7 @@ enum TCP_STATE {NOT_CONNECTED, PRE_CONNECTING, CONNECTING, CONNECTED}
 enum EVENT {STATE_OUT_OF_SERVICE, CALL_STATE_RINGING, CALL_STATE_OFFHOOK, DataConnectivity_UP, OptionsMenuItemCONNECT,
     ActiveNetworkConnectedConfirmation, NO_ActiveNetworkConnectedConfirmation, TCP_CONNECTING_FAILED, TCP_CONNECTED,
     TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED, SERVER_DISCONNECTED, TCP_HALF_OPEN}
-//last allocated tag:Vladi25
+//last allocated tag:Vladi26
 public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
     EditText et1; //Vl.editTextTCPlogger1
     private SocketChannel sc = null;
@@ -181,6 +181,11 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 
     private boolean activeNetworkConnected() {
         if (cm == null) cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            Vsupport1.log(et1, "\nVl26. " + e.toString());
+        }
         android.net.NetworkInfo activeNetwork = cm.getActiveNetworkInfo(); //Requires the ACCESS_NETWORK_STATE permission.
         if (activeNetwork != null && activeNetwork.isConnected()) return true; //"short-circuiting" behavior
             //Vl.layer 3 isConnected not layer 4
