@@ -310,7 +310,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         }
         serverIpAddr = sharedPref.getString("server_address", "");
         serverTcpPort = sharedPref.getString("server_port", "");
-        et1.append("\nConnecting to: " + serverIpAddr + "." + serverTcpPort + " ....");
+        Vsupport1.log(et1, "\nConnecting to: " + serverIpAddr + "." + serverTcpPort + " ....");
         new Thread() {
             @Override
             public void run() {
@@ -452,6 +452,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             System.out.println("Inside receivemsg");
             int nBytes, i = 0;
             int previousKAi = 20000, kAinterval = 20000; //must be correlated with Erlang tcpServer_1 loop(Socket,start) delay
+            Vsupport1.log(et1, "\n");
             try {
                 while (val) {
                     if (kAinterval != previousKAi) {
