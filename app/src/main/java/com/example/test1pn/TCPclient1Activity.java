@@ -181,11 +181,6 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 
     private boolean activeNetworkConnected() {
         if (cm == null) cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        try {
-            Thread.sleep(2500);
-        } catch (InterruptedException e) {
-            Vsupport1.log(et1, "\nVl26. " + e.toString());
-        }
         android.net.NetworkInfo activeNetwork = cm.getActiveNetworkInfo(); //Requires the ACCESS_NETWORK_STATE permission.
         if (activeNetwork != null && activeNetwork.isConnected()) return true; //"short-circuiting" behavior
             //Vl.layer 3 isConnected not layer 4
@@ -309,6 +304,11 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 
     private void tcpConnect() {
         final String serverIpAddr, serverTcpPort;
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            Vsupport1.log(et1, "\nVl26. " + e.toString());
+        }
         if (!activeNetworkConnected()) {
             tcpFSM(EVENT.TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED);
             return;
