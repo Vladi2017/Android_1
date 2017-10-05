@@ -15,6 +15,7 @@ package com.example.test1pn;
  * 11.AlarmManager1. https://developer.android.com/training/scheduling/alarms.html#boot
  * 12.Intents1. (action intents constants).
  * */
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.DatagramPacket;
@@ -122,6 +123,11 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 		if (timer_ElapsedTask != null) {
 			timer_ElapsedTask.cancel();
 			timer.cancel();
+		}
+		try {
+			App.bufW1.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		super.onDestroy();
 	}

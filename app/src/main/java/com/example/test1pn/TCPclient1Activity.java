@@ -107,6 +107,11 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     protected void onDestroy() {
         Vsupport1.log(MainActivity.ev1, "\nVl./TCPc1A., from onDestroy()");
         this.unregisterReceiver(connectivityEventsReceiver);
+        try {
+            App.bufW1.close();
+        } catch (IOException e) {
+            Vsupport1.log(MainActivity.ev1, "\nVl./TCPc1A., at log file close.. " + e.toString());
+        }
         super.onDestroy();
     }
     @Override

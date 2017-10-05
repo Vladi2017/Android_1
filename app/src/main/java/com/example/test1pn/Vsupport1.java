@@ -40,4 +40,14 @@ public class Vsupport1 {
 			return numVal;
 		}
 	}
+	// http://stackoverflow.com/a/6209739/3180812
+	public static void textFileLog(String text, java.io.BufferedWriter buf) {
+		try {// BufferedWriter for performance
+			buf.append(text);
+			buf.newLine();
+//			buf.close();
+		} catch (java.io.IOException e) {
+			android.util.Log.i("textFileLog", "Vl." + e.toString());
+		}
+	}
 }
