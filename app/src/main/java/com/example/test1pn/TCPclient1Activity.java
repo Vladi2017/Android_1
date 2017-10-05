@@ -22,11 +22,12 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
-
+/**/
 enum TCP_STATE {NOT_CONNECTED, PRE_CONNECTING, CONNECTING, CONNECTED}
 enum EVENT {STATE_OUT_OF_SERVICE, CALL_STATE_RINGING, CALL_STATE_OFFHOOK, DataConnectivity_UP, OptionsMenuItemCONNECT,
     ActiveNetworkConnectedConfirmation, NO_ActiveNetworkConnectedConfirmation, TCP_CONNECTING_FAILED, TCP_CONNECTED,
-    TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED, SERVER_DISCONNECTED, TCP_HALF_OPEN}
+    TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED, SERVER_DISCONNECTED, TCP_HALF_OPEN,
+    /*for GPRS class B devices*/DATA_SUSPENDED, DataConnectivity_DOWN}
 //last allocated tag:Vladi26
 public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
     EditText et1; //Vl.editTextTCPlogger1
@@ -62,6 +63,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     private PhoneStateListener phoneStateListener;
     //(data) Connectivity related
     ConnectivityEventsReceiver connectivityEventsReceiver;
+    android.net.NetworkInfo activeNetwork; //Requires the ACCESS_NETWORK_STATE permission.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +183,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 
     private boolean activeNetworkConnected() {
         if (cm == null) cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        android.net.NetworkInfo activeNetwork = cm.getActiveNetworkInfo(); //Requires the ACCESS_NETWORK_STATE permission.
+        activeNetwork = cm.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnected()) return true; //"short-circuiting" behavior
             //Vl.layer 3 isConnected not layer 4
         return false;
@@ -261,8 +263,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 break;
             case CONNECTED:
                 switch (event) {
-                    case CALL_STATE_RINGING:
-                    case CALL_STATE_OFFHOOK:
+                    case DATA_SUSPENDED: /*for GPRS class B devices, see GPRS Wikipedia*/
                         if (true) {//Vl.here we should check if we are in GPRS mode
                             try {
                                 if (sc.isConnected()) sc.close(); //Vl.hopefully we have enough time to send a valid TCP SYN flag to tcpServer_1
@@ -274,13 +275,15 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         }
                         break;
                     case STATE_OUT_OF_SERVICE:
-                        closeSocketChannel();
-                        tcpState = TCP_STATE.NOT_CONNECTED;
+                    case DataConnectivity_DOWN://Vl.hopefully far after DATA_SUSPENDED
+                        if (fTCP_AUTO_CONNECT) {
+                            closeSocketChannel(); //Vl.also unleash alarm
+                            tcpState = TCP_STATE.NOT_CONNECTED;
+                        }
                         break;
-                    case SERVER_DISCONNECTED:
                     case TCP_HALF_OPEN:
                         if (fTCP_AUTO_CONNECT) {
-                            closeSocketChannel();
+                            closeSocketChannel(); //Vl.also unleash alarm
                             fTCP_FAIL_ONLY = true;
                             tcpState = TCP_STATE.CONNECTING;
                             tcpConnect();
@@ -313,6 +316,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             tcpFSM(EVENT.TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED);
             return;
         }
+        Vsupport1.log(et1, "\nActiveNetworkType is: " + activeNetwork.getType() + ", "
+                + activeNetwork.getTypeName());
         serverIpAddr = sharedPref.getString("server_address", "");
         serverTcpPort = sharedPref.getString("server_port", "");
         Vsupport1.log(et1, "\nConnecting to: " + serverIpAddr + "." + serverTcpPort + " ....");
@@ -337,8 +342,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 } catch (final IOException e) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            et1.append("\nVladi4. got sc.connect(isa) IOException, " + e.toString() +
-                                    ", Vl4.Throwable detail message: " + e.getMessage());
+                            et1.append("\nVladi4. got sc.connect(isa) IOException, " + e.toString());
+//                                    + ", Vl4.Throwable detail message: " + e.getMessage());
                             et1.append("\nVladi5. receive thread not launched\n");
                         }
                     });
@@ -512,13 +517,14 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             } catch (Exception e) {
                 Vsupport1.log(et1, "\nVl13." + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
                         .format(new java.util.Date()));
-                Vsupport1.log(et1, "\nVl13.., we got an Exception in RecvThread: " + e.toString());
+                Vsupport1.log(et1, "\nVl13.., we got an Exception in RecvThread: " + e.toString()
+                        + ", Vl13.Throwable detail message: " + e.getMessage());
 //                StackTraceElement[] arrSTE = e.getStackTrace();
 //                String textSTEs = "";
 //                for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
 //                Vsupport1.log(et1, textSTEs);
                 Vsupport1.log(et1, "\nVl13.SocketChannel isConnected() returns " + TCPclient1Activity.this.sc.isConnected());
-                tcpFSM(EVENT.SERVER_DISCONNECTED);
+//                tcpFSM(EVENT.SERVER_DISCONNECTED);
             }
 //            finally {
 //                Vsupport1.log(et1, "Vladi16, closing socketChannel..\n");
@@ -540,12 +546,12 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 case TelephonyManager.CALL_STATE_IDLE:
                     Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_IDLE"); break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
-                    wasCellularCall = true;
-                    tcpFSM(EVENT.CALL_STATE_OFFHOOK);
+//                    wasCellularCall = true;
+//                    tcpFSM(EVENT.CALL_STATE_OFFHOOK);
                     Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_OFFHOOK"); break;
                 case TelephonyManager.CALL_STATE_RINGING:
-                    wasCellularCall = true;
-                    tcpFSM(EVENT.CALL_STATE_RINGING);
+//                    wasCellularCall = true;
+//                    tcpFSM(EVENT.CALL_STATE_RINGING);
                     Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_RINGING"); break;
                 default:
                     Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, CALL_STATE_UNKNOWN");
@@ -561,6 +567,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 case TelephonyManager.DATA_CONNECTED:
                     Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_CONNECTED"); break;
                 case TelephonyManager.DATA_SUSPENDED:
+                    wasCellularCall = true;
+                    tcpFSM(EVENT.DATA_SUSPENDED);
                     Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vladi18, DATA_SUSPENDED"); break;
                 default:
                     Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl18, DATA_STATE_UNKNOWN");
@@ -589,7 +597,10 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 //            android.net.NetworkInfo networkInfo = intent.getParcelableExtra(android.net.ConnectivityManager.EXTRA_NETWORK_INFO);
             boolean noDataConnectivity = intent.getBooleanExtra(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
             Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()));
-            if (noDataConnectivity) Vsupport1.log(et1, ": Vl21, DataConnectivity_DOWN");
+            if (noDataConnectivity) {
+                Vsupport1.log(et1, ": Vl21, DataConnectivity_DOWN");
+                tcpFSM(EVENT.DataConnectivity_DOWN);
+            }
             else {
                 Vsupport1.log(et1, ": Vl21, DataConnectivity_UP");
                 tcpFSM(EVENT.DataConnectivity_UP);
