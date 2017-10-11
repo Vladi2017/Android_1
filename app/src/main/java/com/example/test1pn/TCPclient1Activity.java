@@ -28,7 +28,7 @@ enum EVENT {STATE_OUT_OF_SERVICE, CALL_STATE_RINGING, CALL_STATE_OFFHOOK, DataCo
     ActiveNetworkConnectedConfirmation, NO_ActiveNetworkConnectedConfirmation, TCP_CONNECTING_FAILED, TCP_CONNECTED,
     TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED, SERVER_DISCONNECTED, TCP_HALF_OPEN,
     /*for GPRS class B devices*/DATA_SUSPENDED, DataConnectivity_DOWN}
-//last allocated tag:Vladi26
+//last allocated tag:Vladi27
 public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
     EditText et1; //Vl.editTextTCPlogger1
     private SocketChannel sc = null;
@@ -228,6 +228,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             tcpState = TCP_STATE.PRE_CONNECTING;
                         }
                         break;
+                    default:
+                        Vsupport1.log(et1, " .. not treated.");
                 }
                 break;
             case PRE_CONNECTING:
@@ -244,6 +246,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         tcpState = TCP_STATE.CONNECTING;
                         tcpConnect();
                         break;
+                    default:
+                        Vsupport1.log(et1, " .. not treated.");
                 }
                 break;
             case CONNECTING:
@@ -265,6 +269,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             }
                         else tcpState = TCP_STATE.NOT_CONNECTED; //Vl.for STATE_OUT_OF_SERVICE
                         break;
+                    default:
+                        Vsupport1.log(et1, " .. not treated.");
                 }
                 break;
             case CONNECTED:
@@ -293,6 +299,9 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             tcpState = TCP_STATE.CONNECTING;
                             tcpConnect();
                         } else tcpState = TCP_STATE.NOT_CONNECTED;
+                        break;
+                    default:
+                        Vsupport1.log(et1, " .. not treated.");
                 }
         }
     }
@@ -471,10 +480,6 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             Vsupport1.log(et1, "\n");
             try {
                 while (val) {
-                    if (kAinterval != previousKAi) {
-                        sc.socket().setSoTimeout(kAinterval + kAinterval / 2);
-                        previousKAi = kAinterval;
-                    }
                     while ((nBytes = TCPclient1Activity.this.sc.read(buf)) > 5) {
                         if (TCPclient1Activity.this.sc.isBlocking()) {
                             System.out.println("V.The sc SocketChannel is in blocking mode.");
@@ -492,8 +497,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             Vsupport1.log(et1, "ka" + seq + "d" + rcvDelay);
                             sendBuf.position(8);
                             sendBuf.putInt(seq);
-                            kAinterval = Integer.parseInt(sharedPref.getString("server_ka_interval", "20"));
-                            sendBuf.put(sendBuf.capacity() - 1, (byte) (kAinterval / 10));
+                            kAinterval = Integer.parseInt(sharedPref.getString("server_ka_interval", "20")) * 1000;
+                            sendBuf.put(sendBuf.capacity() - 1, (byte) (kAinterval / 10000));
                             sendBuf.clear();
                             nBytes = TCPclient1Activity.this.sc.write(sendBuf);
                             Vsupport1.log(et1, "ack ");
@@ -502,9 +507,12 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             java.nio.CharBuffer charBuffer = decoder.decode(buf);
                             String result = charBuffer.toString();
                             Vsupport1.log(et1, result + "\n");
-                            //Vl.here was a bug.. we need to send  again in order to maintain ka/response handshake with Erlang tcpServer_1 echo_server rel.11
-//                            sendBuf.clear();
-//                            nBytes = TCPclient1Activity.this.sc.write(sendBuf);
+                        }
+                        if (kAinterval != previousKAi) {
+                            final int kato = kAinterval + kAinterval / 2; //ka time out
+                            sc.socket().setSoTimeout(kato);
+                            previousKAi = kAinterval;
+                            Vsupport1.log(et1, "\nVl27. setSoTimeout to " + kato / 1000 + " seconds.");
                         }
                         buf.clear();
                     }

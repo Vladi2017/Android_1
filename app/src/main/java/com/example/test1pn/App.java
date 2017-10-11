@@ -10,6 +10,8 @@ public class App extends Application {
     static final String TAG1 = "App";
     static java.io.BufferedWriter bufW1;
     private StackTraceElement[] arrSTE;
+    private Throwable causedBy;
+    private StackTraceElement[] causedByArrSTE;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -44,6 +46,10 @@ public class App extends Application {
 //                for (StackTraceElement ste : arrSTE)
 //                    Vsupport1.textFileLog(ste.toString(), bufW1);
                 for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
+                textSTEs += "\nVl. caused by:\n";
+                causedBy = e.getCause();
+                causedByArrSTE = causedBy.getStackTrace();
+                for (StackTraceElement ste : causedByArrSTE) textSTEs += (ste.toString() + "\n");
                 Vsupport1.textFileLog(textSTEs, bufW1);
                 try {
 //                    bufW1.flush();
