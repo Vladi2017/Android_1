@@ -24,7 +24,7 @@ public class App extends Application {
         logFile.setWritable(/*writable*/true, /*ownerOnly*/false);
         try {
             bufW1 = new java.io.BufferedWriter(
-                    new java.io.FileWriter(logFile, /*append*/false));
+                    new java.io.FileWriter(logFile, /*append*/true));
         } catch (java.io.IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

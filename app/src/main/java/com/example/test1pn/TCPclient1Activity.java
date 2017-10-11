@@ -146,7 +146,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         MenuItem mi = menu.findItem(R.id.connect);
-        if (fTCP_AUTO_CONNECT) mi.setEnabled(false);
+        if (tcpState == TCP_STATE.CONNECTED) mi.setEnabled(false);
         else mi.setEnabled(true);
         return true;
     }
@@ -230,12 +230,13 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         break;
                 }
                 break;
-            case PRE_CONNECTING: //TODO: treat CALL_STATE_RINGING also
+            case PRE_CONNECTING:
                 switch (event) {
                     case STATE_OUT_OF_SERVICE:
                         alarmMgr.cancel(testDataChannelPendingIntent);//Vl.we know is not null since we always come from NOT_CONNECTED
                         tcpState = TCP_STATE.NOT_CONNECTED;
                         break;
+                    case DATA_SUSPENDED:
                     case NO_ActiveNetworkConnectedConfirmation:
                         tcpState = TCP_STATE.NOT_CONNECTED;
                         break;
@@ -280,19 +281,18 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         }
                         break;
                     case STATE_OUT_OF_SERVICE:
-                    case DataConnectivity_DOWN://Vl.hopefully far after DATA_SUSPENDED
-                        if (fTCP_AUTO_CONNECT) {
-                            closeSocketChannel(); //Vl.also unleash alarm
-                            tcpState = TCP_STATE.NOT_CONNECTED;
-                        }
+                    case DataConnectivity_DOWN://Vl.hopefully far after DATA_SUSPENDED above
+                        closeSocketChannel(); //Vl.also unleash alarm
+                        tcpState = TCP_STATE.NOT_CONNECTED;
                         break;
+                    case SERVER_DISCONNECTED:
                     case TCP_HALF_OPEN:
                         if (fTCP_AUTO_CONNECT) {
                             closeSocketChannel(); //Vl.also unleash alarm
                             fTCP_FAIL_ONLY = true;
                             tcpState = TCP_STATE.CONNECTING;
                             tcpConnect();
-                        }
+                        } else tcpState = TCP_STATE.NOT_CONNECTED;
                 }
         }
     }
@@ -388,6 +388,9 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             new Thread() {
                 @Override
                 public void run() {
+                    Vsupport1.log(et1, "\nVladi19. sending: " + finalBytebuf.array().toString() + ", " +
+                            String.valueOf(finalBytebuf.array()));
+                    if (finalMsg.contains("down")) fTCP_AUTO_CONNECT = false;
                     try {
                         sc.write(finalBytebuf);
                     } catch (IOException e) {
@@ -408,8 +411,6 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         Vsupport1.log(MainActivity.ev1, "\nVladi11 caught: " + e.toString());
                         return;
                     }
-                    Vsupport1.log(et1, "\nVladi19. sent: " + finalBytebuf.array().toString());
-                    if (finalMsg.contains("down")) fTCP_AUTO_CONNECT = false;
                 }
             }.start();
         } else {
@@ -528,8 +529,12 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 //                String textSTEs = "";
 //                for (StackTraceElement ste : arrSTE) textSTEs += (ste.toString() + "\n");
 //                Vsupport1.log(et1, textSTEs);
-                Vsupport1.log(et1, "\nVl13.SocketChannel isConnected() returns " + TCPclient1Activity.this.sc.isConnected());
-//                tcpFSM(EVENT.SERVER_DISCONNECTED);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e1) {}
+                Vsupport1.log(et1, "\nVl13.SocketChannel isConnected() returns " + TCPclient1Activity.this.sc.isConnected() +
+                        ".., sent 2s delayed EVENT.SERVER_DISCONNECTED");
+                tcpFSM(EVENT.SERVER_DISCONNECTED);
             }
 //            finally {
 //                Vsupport1.log(et1, "Vladi16, closing socketChannel..\n");
