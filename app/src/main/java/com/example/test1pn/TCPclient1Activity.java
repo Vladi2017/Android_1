@@ -82,6 +82,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE
                 | PhoneStateListener.LISTEN_DATA_CONNECTION_STATE | PhoneStateListener.LISTEN_SERVICE_STATE);
         this.registerReceiver(connectivityEventsReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        Vsupport1.log(et1, "\n" + sdf.format(System.currentTimeMillis()) + "V.from the end of onCreate()");
     }
     @Override
     protected void onStart() {
@@ -105,12 +106,14 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     }
     @Override
     protected void onDestroy() {
-        Vsupport1.log(MainActivity.ev1, "\nVl./TCPc1A., from onDestroy()");
+//        Vsupport1.log(MainActivity.ev1, "\nVl./TCPc1A., from onDestroy()");
+        Vsupport1.textFileLog("\n" + sdf.format(System.currentTimeMillis()) +
+                "\nVl./TCPc1A., from onDestroy()", App.bufW1);
         this.unregisterReceiver(connectivityEventsReceiver);
         try {
             App.bufW1.close();
         } catch (IOException e) {
-            Vsupport1.log(MainActivity.ev1, "\nVl./TCPc1A., at log file close.. " + e.toString());
+//            Vsupport1.log(MainActivity.ev1, "\nVl./TCPc1A., at log file close.. " + e.toString());
         }
         super.onDestroy();
     }
@@ -138,7 +141,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        MainActivity.ev1.append("\nVladi1.Test from TCPclient1Activity == TCPc1A");
+//        MainActivity.ev1.append("\nVladi1.Test from TCPclient1Activity == TCPc1A");
         getMenuInflater().inflate(R.menu.menu1_tcpclient1activity, menu);
         return true;
     }
@@ -387,7 +390,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     // V. CgetStrDiag.CgetStrDiagListener interface implementation:
     @Override
     public void onDialogPositiveClick(CgetStrDiag dialog) {
-        String msg = null;
+        String msg;
         ByteBuffer bytebuf = ByteBuffer.allocate(1024);
         msg = dialog.getUserInput() + "\n";
         bytebuf = ByteBuffer.wrap(msg.getBytes());

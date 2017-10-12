@@ -113,6 +113,12 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 		super.onStop();
 	}
 	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		Vsupport1.textFileLog("\n" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+				.format(System.currentTimeMillis()) + "\nVl./MainActivity., from onDestroy()", App.bufW1);
+		super.onSaveInstanceState(outState);
+	}
+	@Override
 	protected void onDestroy() {
 		android.util.Log.i(TAG1, "V.from onDestroy()");
 		timerHandler.removeCallbacks(timer1Runnable);
