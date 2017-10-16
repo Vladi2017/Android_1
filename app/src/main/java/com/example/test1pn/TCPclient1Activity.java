@@ -64,6 +64,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     //(data) Connectivity related
     ConnectivityEventsReceiver connectivityEventsReceiver;
     android.net.NetworkInfo activeNetwork; //Requires the ACCESS_NETWORK_STATE permission.
+    java.util.concurrent.ArrayBlockingQueue<EVENT> eventArrayBlockingQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,6 +230,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                             alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, android.os.SystemClock.elapsedRealtime() + 60000,
                                     testDataChannelPendingIntent);
                             tcpState = TCP_STATE.PRE_CONNECTING;
+                            Vsupport1.log(et1, "\nVl.switched to " + tcpState);
                         }
                         break;
                     default:
@@ -259,7 +261,6 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                         tcpState = TCP_STATE.NOT_CONNECTED;
                         break;
                     case TCP_CONNECTED:
-                        fTCP_FAIL_ONLY = false;
                         cntReconnect = 0;
                         tcpState = TCP_STATE.CONNECTED;
                         break;
@@ -279,19 +280,20 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
             case CONNECTED:
                 switch (event) {
                     case DATA_SUSPENDED: /*for GPRS class B devices, see GPRS Wikipedia*/
-                        if (true) {//Vl.here we should check if we are in GPRS mode
-                            try {
-                                if (sc.isConnected()) sc.close(); //Vl.hopefully we have enough time to send a valid TCP SYN flag to tcpServer_1
-                            } catch (Exception ex) {                //RecvThread will die anyway
-                                Vsupport1.log(et1, "\nVladi23.., SocketChannel.close() (IO)Exception when CONNECTED/CALL_STATE_RINGING: +" +
-                                        ex.toString());
-                            }
-                            tcpState = TCP_STATE.NOT_CONNECTED;
+                        try {
+                            if (sc.isConnected())
+                                sc.close(); //Vl.hopefully we have enough time to send a valid TCP SYN flag to tcpServer_1
+                        } catch (Exception ex) {                //RecvThread will die anyway
+                            Vsupport1.log(et1, "\nVladi23.., SocketChannel.close() (IO)Exception when CONNECTED/CALL_STATE_RINGING: +" +
+                                    ex.toString());
                         }
+                        fTCP_FAIL_ONLY = false;
+                        tcpState = TCP_STATE.NOT_CONNECTED;
                         break;
                     case STATE_OUT_OF_SERVICE:
                     case DataConnectivity_DOWN://Vl.hopefully far after DATA_SUSPENDED above
                         closeSocketChannel(); //Vl.also unleash alarm
+                        fTCP_FAIL_ONLY = false;
                         tcpState = TCP_STATE.NOT_CONNECTED;
                         break;
                     case SERVER_DISCONNECTED:
@@ -324,23 +326,23 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
 
     private void tcpConnect() {
         final String serverIpAddr, serverTcpPort;
-        try {
-            Thread.sleep(2500);
-        } catch (InterruptedException e) {
-            Vsupport1.log(et1, "\nVl26. " + e.toString());
-        }
-        if (!activeNetworkConnected()) {
-            tcpFSM(EVENT.TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED);
-            return;
-        }
-        Vsupport1.log(et1, "\nActiveNetworkType is: " + activeNetwork.getType() + ", "
-                + activeNetwork.getTypeName());
         serverIpAddr = sharedPref.getString("server_address", "");
         serverTcpPort = sharedPref.getString("server_port", "");
-        Vsupport1.log(et1, "\nConnecting to: " + serverIpAddr + "." + serverTcpPort + " ....");
         new Thread() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(2500);
+                } catch (InterruptedException e) {
+                    Vsupport1.log(et1, "\nVl26. " + e.toString());
+                }
+                if (!activeNetworkConnected()) {
+                    tcpFSM(EVENT.TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED);
+                    return;
+                }
+                Vsupport1.log(et1, "\nActiveNetworkType is: " + activeNetwork.getType() + ", "
+                        + activeNetwork.getTypeName());
+                Vsupport1.log(et1, "\nConnecting to: " + serverIpAddr + "." + serverTcpPort + " ....");
                 try {
                     if (sc == null || !sc.isOpen()) sc = SocketChannel.open();
                 } catch (final IOException e) {
@@ -353,7 +355,8 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                     tcpFSM(EVENT.TCP_CONNECTING_FAILED);
                     return;
                 }
-                if (isa == null) isa = new InetSocketAddress(serverIpAddr, Integer.parseInt(serverTcpPort));
+                if (isa == null)
+                    isa = new InetSocketAddress(serverIpAddr, Integer.parseInt(serverTcpPort));
                 try {
                     sc.connect(isa);
                 } catch (final IOException e) {
