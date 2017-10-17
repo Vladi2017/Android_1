@@ -71,19 +71,20 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         super.onCreate(savedInstanceState);// call the super class onCreate to complete the creation of activity like the view hierarchy
         t = Toast.makeText(getBaseContext(), "", Toast.LENGTH_LONG);
         t.setGravity(Gravity.CENTER, 0, 0);
+        setContentView(R.layout.activity_tcpclient1);
+        et1 = (EditText) findViewById(R.id.editTextTCPlogger1);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         telephonyManager = (android.telephony.TelephonyManager) getSystemService(android.content.Context.TELEPHONY_SERVICE);
         phoneStateListener = new PhoneStateListener();
         sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         sdfHMsS = new java.text.SimpleDateFormat("HH:mm:ss.SSS");
+        Vsupport1.log(et1, "\n" + sdf.format(System.currentTimeMillis()) + "V.tcpState value before initialisation in onCreate(): "
+                + tcpState);
         tcpState = TCP_STATE.NOT_CONNECTED;
         connectivityEventsReceiver = new ConnectivityEventsReceiver();
-        setContentView(R.layout.activity_tcpclient1);
-        et1 = (EditText) findViewById(R.id.editTextTCPlogger1);
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE
                 | PhoneStateListener.LISTEN_DATA_CONNECTION_STATE | PhoneStateListener.LISTEN_SERVICE_STATE);
         this.registerReceiver(connectivityEventsReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        Vsupport1.log(et1, "\n" + sdf.format(System.currentTimeMillis()) + "V.from the end of onCreate()");
     }
     @Override
     protected void onStart() {
@@ -93,7 +94,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first(Android doc)(https://developer.android.com/guide/components/activities/activity-lifecycle.html)
-        Vsupport1.log(et1, "\nV.from onResume()");
+        Vsupport1.log(et1, "\nV.from onResume()" + sdf.format(System.currentTimeMillis()));
     }
     @Override
     public void onPause() {
@@ -104,6 +105,20 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
     protected void onStop() {
         super.onStop();// call the superclass method first (Android doc)
         Vsupport1.log(et1, "\nV.from OnStop()");
+    }
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Vsupport1.log(et1, "\n" + sdf.format(System.currentTimeMillis()) + ", Vl./TCPc1A., from onRestoreInstanceState(bundle)");
+        tcpState = TCP_STATE.values()[savedInstanceState.getInt("tcpState")];
+        fTCP_AUTO_CONNECT = savedInstanceState.getBoolean("fTCP_AUTO_CONNECT");
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Vsupport1.log(et1, "\n" + sdf.format(System.currentTimeMillis()) + ", Vl./TCPc1A., from onSaveInstanceState(bundle)");
+        outState.putInt("tcpState", tcpState.ordinal());
+        outState.putBoolean("fTCP_AUTO_CONNECT", fTCP_AUTO_CONNECT);
+        super.onSaveInstanceState(outState);
     }
     @Override
     protected void onDestroy() {
@@ -128,7 +143,7 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
                 if (cd.get()) {
                     fTCP_AUTO_CONNECT = false;
                     if (sc != null) try {
-                        sc.close();
+                        sc.close();//Vl.here also RecvThread should die.., but et1??
                     } catch (IOException e) {
                         Vsupport1.log(MainActivity.ev1, "\nVladi20/TCPc1A.., SocketChannel.close() IOException on backButton: +" +
                                 e.toString());

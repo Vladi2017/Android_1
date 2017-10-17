@@ -115,7 +115,7 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		Vsupport1.textFileLog("\n" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-				.format(System.currentTimeMillis()) + "\nVl./MainActivity., from onDestroy()", App.bufW1);
+				.format(System.currentTimeMillis()) + "\nVl./MainActivity., from onSaveInstanceState()", App.bufW1);
 		super.onSaveInstanceState(outState);
 	}
 	@Override
