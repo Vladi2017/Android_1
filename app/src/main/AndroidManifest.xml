@@ -16,13 +16,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        tools:replace="android:icon"
-        android:name=".App"
-        tools:remove="android:supportsRtl,android:roundIcon">
+        tools:remove="android:supportsRtl,android:roundIcon"
+        tools:replace="android:icon">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">
@@ -33,11 +33,14 @@
         </activity>
         <activity
             android:name=".TCPclient1Activity"
-            android:label="@string/label_tcpclient1activity"/>
+            android:label="@string/label_tcpclient1activity" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings">
         </activity>
+        <service
+            android:name=".TCPclient1Service"
+            android:exported="false">
+        </service>
     </application>
-
 </manifest>

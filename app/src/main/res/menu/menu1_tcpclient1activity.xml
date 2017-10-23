@@ -11,4 +11,7 @@
     <item
         android:id="@+id/mess1"
         android:title="Send" />
+    <item
+        android:id="@+id/stop_c1_service"
+        android:title="destroyC1Service" />
 </menu>
