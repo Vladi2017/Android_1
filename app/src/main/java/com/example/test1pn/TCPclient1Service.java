@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 
@@ -95,7 +96,7 @@ public class TCPclient1Service extends Service {
 //        notification.setLatestEventInfo(this, getText(R.string.app_name),
 //                getText(R.string.app_running), pendingIntent);
         Notification notification =
-                new Notification.Builder(this)
+                new NotificationCompat.Builder(this)
                 .setContentTitle(getText(R.string.notification1_title))
                 .setContentText(getText(R.string.notification1_message))
                 .setSmallIcon(R.drawable.android1)
