@@ -122,8 +122,9 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 	protected void onDestroy() {
 		android.util.Log.i(TAG1, "V.from onDestroy()");
 		Vsupport1.textFileLog("\n" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-				.format(System.currentTimeMillis()) + "\nVl./MainActivity., from onDestroy()" +
-				"sdcard/test1pn_log.txt will be closed!!", App.bufW1);
+				.format(System.currentTimeMillis()) + "\nVl./MainActivity., from onDestroy()",
+//				"sdcard/test1pn_log.txt will be closed!!",
+                App.bufW1);
 		timerHandler.removeCallbacks(timer1Runnable);
 		if (stpe != null) {
 			stpe.shutdown();
@@ -133,11 +134,11 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			timer_ElapsedTask.cancel();
 			timer.cancel();
 		}
-		try {
-			App.bufW1.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			App.bufW1.close();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		super.onDestroy();
 	}
 

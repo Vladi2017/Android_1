@@ -22,11 +22,13 @@ enum EVENT {STATE_OUT_OF_SERVICE, CALL_STATE_RINGING, CALL_STATE_OFFHOOK, DataCo
     ActiveNetworkConnectedConfirmation, NO_ActiveNetworkConnectedConfirmation, TCP_CONNECTING_FAILED, TCP_CONNECTED,
     TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED, SERVER_DISCONNECTED, TCP_HALF_OPEN,
     /*for GPRS class B devices*/DATA_SUSPENDED, DataConnectivity_DOWN}
-//last allocated tag:Vladi29
+//last allocated tag:Vladi31
 
 public class TCPclient1Service extends Service {
     static final String TAG1 = "TCPc1Service";
     static TCPclient1Service instance;
+    java.util.Date startTimeStamp;
+    int totalSeqAcks = 0;
     static android.widget.EditText et1; //Vl.editTextTCPlogger1 of TCPclient1Activity
     java.text.SimpleDateFormat sdfHMsS; //Vl.just HourMinuteSecondMilliseconds
     java.text.SimpleDateFormat sdf; //Vl.YearMonthDayHourMinuteSecondMilliseconds
@@ -92,7 +94,7 @@ public class TCPclient1Service extends Service {
 //        notificationIntent.setAction(Intent.ACTION_MAIN);
 //        notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
+                notificationIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
 //        notification.setLatestEventInfo(this, getText(R.string.app_name),
 //                getText(R.string.app_running), pendingIntent);
         Notification notification =
@@ -182,14 +184,14 @@ public class TCPclient1Service extends Service {
             int nBytes, i = 0;
             int previousKAi = 20000, kAinterval = 20000; //must be correlated with Erlang tcpServer_1 loop(Socket,start) delay
             Vsupport1.log(et1, "\n");
+            if (sc.isBlocking()) {
+                Vsupport1.log(et1, "\nV.The sc SocketChannel is in blocking mode.");
+            } else {
+                Vsupport1.log(et1, "\nV.The sc SocketChannel is NOT in blocking mode !!!!");
+            }
             try {
                 while (val) {
                     while ((nBytes = sc.read(buf)) > 5) {
-                        if (sc.isBlocking()) {
-                            System.out.println("V.The sc SocketChannel is in blocking mode.");
-                        } else {
-                            System.out.println("V.The sc SocketChannel is NOT in blocking mode !!!!");
-                        }
                         i = 0;
                         buf.flip();
                         int bl = buf.limit();
@@ -206,11 +208,12 @@ public class TCPclient1Service extends Service {
                             sendBuf.clear();
                             nBytes = sc.write(sendBuf);
                             Vsupport1.log(et1, "ack ");
+                            totalSeqAcks++;
                         } else {
                             buf.limit(bl);
                             java.nio.CharBuffer charBuffer = decoder.decode(buf);
                             String result = charBuffer.toString();
-                            Vsupport1.log(et1, result + "\n");
+                            Vsupport1.log(et1, "\nVl.30 msgReceived: " + result + "\n");
                         }
                         if (kAinterval != previousKAi) {
                             final int kato = kAinterval + kAinterval / 2; //ka time out
@@ -248,6 +251,7 @@ public class TCPclient1Service extends Service {
                         ".., sent 2s delayed EVENT.SERVER_DISCONNECTED");
                 tcpFSM(EVENT.SERVER_DISCONNECTED);
             }
+            Vsupport1.log(et1, "\n" + sdf.format(System.currentTimeMillis()) + TAG1 + " leaved RecvThread.");
 //            finally {
 //                Vsupport1.log(et1, "Vladi16, closing socketChannel..\n");
 //                try {
@@ -354,8 +358,10 @@ public class TCPclient1Service extends Service {
                 }
                 Vsupport1.log(et1, "done\n");
                 if (sc.isConnected()) {
+                    java.util.Date timeStamp = new java.util.Date();
+                    if (null == startTimeStamp) startTimeStamp = timeStamp;
                     Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                            .format(new java.util.Date()) + "\n");
+                            .format(timeStamp) + "\n");
                     kaLoop(); //Vl.keepalive receive thread starting
                     tcpFSM(EVENT.TCP_CONNECTED);
                 }

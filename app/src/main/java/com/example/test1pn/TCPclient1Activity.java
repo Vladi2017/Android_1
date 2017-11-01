@@ -31,6 +31,11 @@ public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag
         sdfHMsS = new java.text.SimpleDateFormat("HH:mm:ss.SSS");
         Vsupport1.log(et1, "\n" + sdf.format(System.currentTimeMillis()) + TAG1 + ".onCreate()" +
                 ", tcpClient1ServiceIntent=" + tcpClient1ServiceIntent);
+        if (TCPclient1Service.instance != null) {
+            Vsupport1.log(et1, "\nV.startTimeStamp: " + sdf.format(TCPclient1Service.instance.startTimeStamp));
+            Vsupport1.log(et1, "\nV.totalSeqAcks: " + TCPclient1Service.instance.totalSeqAcks);
+            TCPclient1Service.et1 = et1;
+        }
     }
     @Override
     protected void onStart() {
