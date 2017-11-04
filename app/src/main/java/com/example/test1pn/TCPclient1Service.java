@@ -22,7 +22,7 @@ enum EVENT {STATE_OUT_OF_SERVICE, CALL_STATE_RINGING, CALL_STATE_OFFHOOK, DataCo
     ActiveNetworkConnectedConfirmation, NO_ActiveNetworkConnectedConfirmation, TCP_CONNECTING_FAILED, TCP_CONNECTED,
     TCP_CONNECT_NO_ACTIVE_NETWORK_CONNECTED, SERVER_DISCONNECTED, TCP_HALF_OPEN,
     /*for GPRS class B devices*/DATA_SUSPENDED, DataConnectivity_DOWN}
-//last allocated tag:Vladi31
+//last allocated tag:Vladi32
 
 public class TCPclient1Service extends Service {
     static final String TAG1 = "TCPc1Service";
@@ -45,6 +45,7 @@ public class TCPclient1Service extends Service {
     boolean wasCellularCall = false;
     //media
     android.net.Uri alarm1URI = null;
+    android.net.Uri connected1URI;
     android.media.Ringtone rt1;
     //Vl. server ka receiving thread vars
     private byte[] sendArr = {'r','e','s','p','o','n','s','e',0,0,0,0,'d','e','l','a','y',0};
@@ -227,7 +228,8 @@ public class TCPclient1Service extends Service {
                             ++i, nBytes, buf.position(), buf.limit(), buf.remaining()));
                     if (nBytes == -1)
                         throw new Exception("Vladi16 _Exception, read -1 Bytes => the channel has reached end-of-stream");
-                    if (i > 3) return;
+                    if (i > 3)
+                        throw new Exception(String.format("Vl32. _Exception, read %d Bytes", nBytes));
                 }
             } catch (java.net.SocketTimeoutException ex) {
                 Vsupport1.log(et1, "\n" + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
@@ -297,7 +299,7 @@ public class TCPclient1Service extends Service {
                     ex.toString());
         }
         if (alarm1URI == null) alarm1URI = android.net.Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.alarm_beep_03_1);
-        if (rt1 == null) rt1 = android.media.RingtoneManager.getRingtone(this, alarm1URI);
+        rt1 = android.media.RingtoneManager.getRingtone(this, alarm1URI);
         rt1.play();
     }
 
@@ -363,6 +365,9 @@ public class TCPclient1Service extends Service {
                     Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                             .format(timeStamp) + "\n");
                     kaLoop(); //Vl.keepalive receive thread starting
+                    if (connected1URI == null) connected1URI = android.net.Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.echo_beep_1);
+                    rt1 = android.media.RingtoneManager.getRingtone(TCPclient1Service.this, connected1URI);
+                    rt1.play();
                     tcpFSM(EVENT.TCP_CONNECTED);
                 }
             }
