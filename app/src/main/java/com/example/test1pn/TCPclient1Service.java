@@ -191,6 +191,7 @@ public class TCPclient1Service extends Service {
                 Vsupport1.log(et1, "\nV.The sc SocketChannel is NOT in blocking mode !!!!");
             }
             try {
+                sc.socket().setSoTimeout(kAinterval);
                 while (val) {
                     while ((nBytes = sc.read(buf)) > 5) {
                         i = 0;

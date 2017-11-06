@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <string name="app_name">test1</string>
-    <string name="app_ver1">ver.206\n</string>
+    <string name="app_ver1">ver.207\n</string>
     <string name="rng1">1.RNG</string>
     <string name="timer1OFF">timerToasts OFF.</string>
     <string name="timer1ON">timerToasts ON.</string>
@@ -19,7 +19,7 @@
     <string name="alarmManager1">11.AlarmManager1</string>
     <string name="intents1">12.Intents1</string>
     <string name="tcpClient1Activitywelcome">Vladi\'s TCPclient1Activity logger</string>
-    <string name="t1">ver.206\n
+    <string name="t1">ver.207\n
         1.cryptographically strong random number generator (RNG)\n
         2.compute SHA256 digest\n
         3.encode Hash MAC\n
