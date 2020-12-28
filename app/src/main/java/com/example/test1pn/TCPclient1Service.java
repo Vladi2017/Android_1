@@ -183,7 +183,8 @@ public class TCPclient1Service extends Service {
         public void run() {
             System.out.println("Inside receivemsg");
             int nBytes, i = 0;
-            int previousKAi = 20000, kAinterval = 20000; //must be correlated with Erlang tcpServer_1 loop(Socket,start) delay
+            int previousKAi = 20000; //must be correlated with Erlang tcpServer_1 loop(Socket,start) delay
+            int kAinterval = Integer.parseInt(sharedPref.getString("server_ka_interval", "20")) * 1000;
             Vsupport1.log(et1, "\n");
             if (sc.isBlocking()) {
                 Vsupport1.log(et1, "\nV.The sc SocketChannel is in blocking mode.");
@@ -191,7 +192,7 @@ public class TCPclient1Service extends Service {
                 Vsupport1.log(et1, "\nV.The sc SocketChannel is NOT in blocking mode !!!!");
             }
             try {
-                sc.socket().setSoTimeout(kAinterval);
+                sc.socket().setSoTimeout(kAinterval / 5);//Vl.kAinterval always 5 multiple, otherwise will crash..
                 while (val) {
                     while ((nBytes = sc.read(buf)) > 5) {
                         i = 0;
@@ -211,6 +212,11 @@ public class TCPclient1Service extends Service {
                             nBytes = sc.write(sendBuf);
                             Vsupport1.log(et1, "ack ");
                             totalSeqAcks++;
+                            if (1 == seq) {
+                                if (connected1URI == null) connected1URI = android.net.Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.echo_beep_1);
+                                rt1 = android.media.RingtoneManager.getRingtone(TCPclient1Service.this, connected1URI);
+                                rt1.play();
+                            }
                         } else {
                             buf.limit(bl);
                             java.nio.CharBuffer charBuffer = decoder.decode(buf);
@@ -229,7 +235,7 @@ public class TCPclient1Service extends Service {
                             ++i, nBytes, buf.position(), buf.limit(), buf.remaining()));
                     if (nBytes == -1)
                         throw new Exception("Vladi16 _Exception, read -1 Bytes => the channel has reached end-of-stream");
-                    if (i > 3)
+                    if (i > 7)
                         throw new Exception(String.format("Vl32. _Exception, read %d Bytes", nBytes));
                 }
             } catch (java.net.SocketTimeoutException ex) {
@@ -366,9 +372,6 @@ public class TCPclient1Service extends Service {
                     Vsupport1.log(et1, new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
                             .format(timeStamp) + "\n");
                     kaLoop(); //Vl.keepalive receive thread starting
-                    if (connected1URI == null) connected1URI = android.net.Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.echo_beep_1);
-                    rt1 = android.media.RingtoneManager.getRingtone(TCPclient1Service.this, connected1URI);
-                    rt1.play();
                     tcpFSM(EVENT.TCP_CONNECTED);
                 }
             }
