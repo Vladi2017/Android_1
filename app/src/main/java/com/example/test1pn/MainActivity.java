@@ -38,7 +38,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.media.RingtoneManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,7 +53,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 //last allocated tag:Vladi6
-public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
+public class MainActivity extends AppCompatActivity implements CgetStrDiag.CgetStrDiagListener {
 	private static final String TAG1 = "MainActivity";
 	private static final int REQ_FILE_PICK1 = 1;
 	SecureRandom random = null;// V.default protected I think..
@@ -314,7 +314,11 @@ public class MainActivity extends ActionBarActivity implements CgetStrDiag.CgetS
 			notificationIntent.setAction(Intent.ACTION_MAIN);
 			notificationIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 			android.app.PendingIntent contentIntent = android.app.PendingIntent.getActivity(this, 0, notificationIntent, 0);
-			notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+			android.app.Notification.Builder.recoverBuilder(context, notification)
+					.setContentTitle(contentTitle)
+					.setContentText(contentText)
+					.setContentIntent(contentIntent);
+			//notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 			// 4.Pass the Notification to the NotificationManager:
 			final int NOTIFICATION_ICON_ID = 1;
 			mNotificationManager.notify(NOTIFICATION_ICON_ID, notification);

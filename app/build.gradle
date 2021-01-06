@@ -2,30 +2,31 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "30.0.2"
+
     defaultConfig {
         applicationId "com.example.test1pn"
         minSdkVersion 15
         targetSdkVersion 19
-        vectorDrawables.useSupportLibrary = true
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-    productFlavors {
     }
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:19.1.0'
-    compile 'com.google.firebase:firebase-messaging:10.0.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation project(":utils1lib-debug")
+
 }
-
-
-
-
-
-apply plugin: 'com.google.gms.google-services'

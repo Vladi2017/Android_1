@@ -1,1 +1,3 @@
-include ':app', ':utils1lib'
+include ':utils1lib-debug'
+include ':app'
+rootProject.name = "test1pn"

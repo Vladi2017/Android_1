@@ -2,7 +2,7 @@ package com.example.test1pn;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 /**/
 //last allocated tag:Vladi28
-public class TCPclient1Activity extends ActionBarActivity implements CgetStrDiag.CgetStrDiagListener {
+public class TCPclient1Activity extends AppCompatActivity implements CgetStrDiag.CgetStrDiagListener {
     static final String TAG1 = "TCPc1A";
     static EditText et1; //Vl.editTextTCPlogger1
     CgetStrDiag newF;//V.newFragment Dialog based on alert dialog

@@ -57,7 +57,7 @@ public class TCPclient1Service extends Service {
     private Charset charset = Charset.forName("us-ascii");
     private java.nio.charset.CharsetDecoder decoder = charset.newDecoder();
     //telephony related
-    private android.telephony.TelephonyManager telephonyManager;
+    private TelephonyManager telephonyManager;
     private PhoneStateListener phoneStateListener;
     //(data) Connectivity related
     ConnectivityEventsReceiver connectivityEventsReceiver;
@@ -68,7 +68,7 @@ public class TCPclient1Service extends Service {
         sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         sdfHMsS = new java.text.SimpleDateFormat("HH:mm:ss.SSS");
         sharedPref = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        telephonyManager = (android.telephony.TelephonyManager) getSystemService(android.content.Context.TELEPHONY_SERVICE);
+        telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         phoneStateListener = new PhoneStateListener();
         tcpState = TCP_STATE.NOT_CONNECTED;
         connectivityEventsReceiver = new ConnectivityEventsReceiver();
@@ -295,7 +295,7 @@ public class TCPclient1Service extends Service {
 
     android.app.AlarmManager alarmMgr;
     Intent testDataChannelIntent = null;
-    android.app.PendingIntent testDataChannelPendingIntent = null;
+    PendingIntent testDataChannelPendingIntent = null;
 
     private void closeSocketChannel() {
         try {
@@ -394,11 +394,11 @@ public class TCPclient1Service extends Service {
                         } else {
                             if (!fTCP_AUTO_CONNECT) return;
                             if (alarmMgr == null)
-                                alarmMgr = (android.app.AlarmManager) this.getSystemService(android.content.Context.ALARM_SERVICE);
+                                alarmMgr = (android.app.AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
                             if (testDataChannelIntent == null)
                                 testDataChannelIntent = new Intent("com.example.test1pn.testDataChannelAction");
                             if (testDataChannelPendingIntent == null) testDataChannelPendingIntent =
-                                    android.app.PendingIntent.getBroadcast(this, 0, testDataChannelIntent, 0);
+                                    PendingIntent.getBroadcast(this, 0, testDataChannelIntent, 0);
                             if (testDataChannelBR == null)
                                 testDataChannelBR = new TestDataChannelBR();
                             this.registerReceiver(testDataChannelBR, new android.content.IntentFilter("com.example.test1pn.testDataChannelAction"));
@@ -524,7 +524,7 @@ public class TCPclient1Service extends Service {
             }
         }
         @Override
-        final public void onServiceStateChanged(android.telephony.ServiceState ss) {
+        final public void onServiceStateChanged(ServiceState ss) {
             switch (ss.getState()) {
                 case ServiceState.STATE_EMERGENCY_ONLY:
                     Vsupport1.log(et1, "\n" + sdfHMsS.format(System.currentTimeMillis()) + ": Vl22, STATE_EMERGENCY_ONLY"); break;
@@ -541,7 +541,7 @@ public class TCPclient1Service extends Service {
     }
     private class ConnectivityEventsReceiver extends android.content.BroadcastReceiver {
         @Override
-        public void onReceive(android.content.Context context, Intent intent) {
+        public void onReceive(Context context, Intent intent) {
 //            Vsupport1.log(et1, "Vl21, got: " + intent.getAction());
 //            android.net.NetworkInfo networkInfo = intent.getParcelableExtra(android.net.ConnectivityManager.EXTRA_NETWORK_INFO);
             boolean noDataConnectivity = intent.getBooleanExtra(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);

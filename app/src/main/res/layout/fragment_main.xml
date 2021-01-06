@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:singleLine="false"
         android:text="@string/t1"
-        android:textSize="@dimen/abc_action_bar_subtitle_text_size"
+        android:textSize="@dimen/abc_text_size_small_material"
         android:textStyle="normal" />
 
     <EditText
@@ -28,7 +28,7 @@
         android:ems="10"
         android:inputType="textMultiLine"
         android:text="@string/app_ver1"
-        android:textSize="@dimen/abc_action_bar_subtitle_text_size" >
+        android:textSize="@dimen/abc_text_size_small_material" >
 
         <requestFocus />
     </EditText>
